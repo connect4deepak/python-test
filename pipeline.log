@@ -1,0 +1,701 @@
+2026-03-27 16:48:50  INFO      ╔══════════════════════════════════════════════════════════╗
+2026-03-27 16:48:50  INFO      ║     EARTHQUAKE DATA PREPROCESSING PIPELINE               ║
+2026-03-27 16:48:50  INFO      ║     Mode: FULL        Version: 1.0.0                   ║
+2026-03-27 16:48:50  INFO      ╚══════════════════════════════════════════════════════════╝
+2026-03-27 16:50:57  INFO      ╔══════════════════════════════════════════════════════════╗
+2026-03-27 16:50:57  INFO      ║     EARTHQUAKE DATA PREPROCESSING PIPELINE               ║
+2026-03-27 16:50:57  INFO      ║     Mode: FULL        Version: 1.0.0                   ║
+2026-03-27 16:50:57  INFO      ╚══════════════════════════════════════════════════════════╝
+2026-03-27 16:50:57  INFO      Table 'earthquakes_processed' is ready.
+2026-03-27 16:50:57  INFO      Loaded 394 rows from 'earthquakes'.
+2026-03-27 16:50:57  INFO      ============================================================
+2026-03-27 16:50:57  INFO      STAGE 1 — Data Cleaning & Validation
+2026-03-27 16:50:57  INFO      Input: 394 rows
+2026-03-27 16:50:57  INFO      ============================================================
+2026-03-27 16:50:57  INFO      [schema]     394 rows after column rename.
+2026-03-27 16:50:57  INFO      [types]      394 rows after type coercion.
+2026-03-27 16:50:57  INFO      [nulls]      No null required-field rows found.
+2026-03-27 16:50:57  INFO      [ranges]     Dropped 2 rows outside valid physical ranges. 392 rows remain.
+2026-03-27 16:50:57  INFO      [duplicates] No duplicate rows found.
+2026-03-27 16:50:57  INFO      [outliers]   'magnitude' — 1 rows outside [-0.20, 3.00] (IQR×1.5) — flagged as is_outlier=True (not dropped).
+2026-03-27 16:50:57  INFO      [outliers]   'depth_km' — 57 rows outside [-15.10, 33.16] (IQR×1.5) — flagged as is_outlier=True (not dropped).
+2026-03-27 16:50:57  INFO      Cleaning complete. Output: 392 rows.
+2026-03-27 16:50:57  INFO      ============================================================
+2026-03-27 16:50:57  INFO      STAGE 2 — Feature Engineering
+2026-03-27 16:50:57  INFO      ============================================================
+2026-03-27 16:50:57  INFO      [features]   Time features added (year, month, dow, hour, cyclic).
+2026-03-27 16:50:57  INFO      [features]   mag_category distribution: {'micro': 327, 'minor': 65}
+2026-03-27 16:50:57  INFO      [features]   depth_category distribution: {'shallow': 372, 'intermediate': 20}
+2026-03-27 16:50:57  INFO      [features]   distance_from_ref_km added (ref = Dublin, Ireland; min=6446 km, max=11449 km).
+2026-03-27 16:50:57  INFO      Feature engineering complete. Columns: ['raw_id', 'event_id', 'magnitude', 'magnitude_type', 'place', 'event_time', 'depth_km', 'latitude', 'longitude', 'alert', 'tsunami', 'sig', 'url', 'status', 'net', 'fetched_at', 'is_outlier', 'year', 'month', 'day_of_week', 'hour', 'is_weekend', 'hour_sin', 'hour_cos', 'month_sin', 'month_cos', 'mag_category', 'depth_category', 'distance_from_ref_km']
+2026-03-27 16:50:57  INFO      ============================================================
+2026-03-27 16:50:57  INFO      STAGE 3 — Transformations (Scaling & Encoding)
+2026-03-27 16:50:57  INFO      ============================================================
+2026-03-27 16:50:57  INFO      [transforms] Fitted new MinMaxScaler and saved to 'scaler.pkl'.
+2026-03-27 16:50:57  INFO      [transforms] Min-Max scaling applied to: ['magnitude', 'depth_km', 'latitude', 'longitude'].
+2026-03-27 16:50:57  INFO      [transforms] Categorical encoding complete.
+2026-03-27 16:50:57  INFO      [transforms] Final column set (24 cols): ['raw_id', 'magnitude', 'latitude', 'longitude', 'depth_km', 'event_time', 'place', 'status', 'year', 'month', 'day_of_week', 'hour', 'is_weekend', 'hour_sin', 'hour_cos', 'month_sin', 'month_cos', 'mag_category', 'depth_category', 'distance_from_ref_km', 'magnitude_scaled', 'depth_scaled', 'latitude_scaled', 'longitude_scaled']
+2026-03-27 16:50:57  INFO      Transformations complete. Shape: (392, 24)
+2026-03-27 16:55:10  INFO      ╔══════════════════════════════════════════════════════════╗
+2026-03-27 16:55:10  INFO      ║     EARTHQUAKE DATA PREPROCESSING PIPELINE               ║
+2026-03-27 16:55:10  INFO      ║     Mode: FULL        Version: 1.0.0                   ║
+2026-03-27 16:55:10  INFO      ╚══════════════════════════════════════════════════════════╝
+2026-03-27 16:55:11  INFO      Table 'earthquakes_processed' is ready.
+2026-03-27 16:55:11  INFO      Loaded 395 rows from 'earthquakes'.
+2026-03-27 16:55:11  INFO      ============================================================
+2026-03-27 16:55:11  INFO      STAGE 1 — Data Cleaning & Validation
+2026-03-27 16:55:11  INFO      Input: 395 rows
+2026-03-27 16:55:11  INFO      ============================================================
+2026-03-27 16:55:11  INFO      [schema]     395 rows after column rename.
+2026-03-27 16:55:11  INFO      [types]      395 rows after type coercion.
+2026-03-27 16:55:11  INFO      [nulls]      No null required-field rows found.
+2026-03-27 16:55:11  INFO      [ranges]     Dropped 2 rows outside valid physical ranges. 393 rows remain.
+2026-03-27 16:55:11  INFO      [duplicates] No duplicate rows found.
+2026-03-27 16:55:11  INFO      [outliers]   'magnitude' — 1 rows outside [-0.20, 3.00] (IQR×1.5) — flagged as is_outlier=True (not dropped).
+2026-03-27 16:55:11  INFO      [outliers]   'depth_km' — 57 rows outside [-15.38, 33.66] (IQR×1.5) — flagged as is_outlier=True (not dropped).
+2026-03-27 16:55:11  INFO      Cleaning complete. Output: 393 rows.
+2026-03-27 16:55:11  INFO      ============================================================
+2026-03-27 16:55:11  INFO      STAGE 2 — Feature Engineering
+2026-03-27 16:55:11  INFO      ============================================================
+2026-03-27 16:55:11  INFO      [features]   Time features added (year, month, dow, hour, cyclic).
+2026-03-27 16:55:11  INFO      [features]   mag_category distribution: {'micro': 328, 'minor': 65}
+2026-03-27 16:55:11  INFO      [features]   depth_category distribution: {'shallow': 372, 'intermediate': 21}
+2026-03-27 16:55:11  INFO      [features]   distance_from_ref_km added (ref = Dublin, Ireland; min=6446 km, max=11449 km).
+2026-03-27 16:55:11  INFO      Feature engineering complete. Columns: ['raw_id', 'event_id', 'magnitude', 'magnitude_type', 'place', 'event_time', 'depth_km', 'latitude', 'longitude', 'alert', 'tsunami', 'sig', 'url', 'status', 'net', 'fetched_at', 'is_outlier', 'year', 'month', 'day_of_week', 'hour', 'is_weekend', 'hour_sin', 'hour_cos', 'month_sin', 'month_cos', 'mag_category', 'depth_category', 'distance_from_ref_km']
+2026-03-27 16:55:11  INFO      ============================================================
+2026-03-27 16:55:11  INFO      STAGE 3 — Transformations (Scaling & Encoding)
+2026-03-27 16:55:11  INFO      ============================================================
+2026-03-27 16:55:11  INFO      [transforms] Loaded existing scaler from 'scaler.pkl'.
+2026-03-27 16:55:11  INFO      [transforms] Min-Max scaling applied to: ['magnitude', 'depth_km', 'latitude', 'longitude'].
+2026-03-27 16:55:11  INFO      [transforms] Categorical encoding complete.
+2026-03-27 16:55:11  INFO      [transforms] Final column set (24 cols): ['raw_id', 'magnitude', 'latitude', 'longitude', 'depth_km', 'event_time', 'place', 'status', 'year', 'month', 'day_of_week', 'hour', 'is_weekend', 'hour_sin', 'hour_cos', 'month_sin', 'month_cos', 'mag_category', 'depth_category', 'distance_from_ref_km', 'magnitude_scaled', 'depth_scaled', 'latitude_scaled', 'longitude_scaled']
+2026-03-27 16:55:11  INFO      Transformations complete. Shape: (393, 24)
+2026-03-27 17:12:09  INFO      ╔══════════════════════════════════════════════════════════╗
+2026-03-27 17:12:09  INFO      ║     EARTHQUAKE DATA PREPROCESSING PIPELINE               ║
+2026-03-27 17:12:09  INFO      ║     Mode: FULL        Version: 1.0.0                   ║
+2026-03-27 17:12:09  INFO      ╚══════════════════════════════════════════════════════════╝
+2026-03-27 17:12:09  INFO      Table 'earthquakes_processed' is ready.
+2026-03-27 17:12:09  INFO      Loaded 399 rows from 'earthquakes'.
+2026-03-27 17:12:09  INFO      ============================================================
+2026-03-27 17:12:09  INFO      STAGE 1 — Data Cleaning & Validation
+2026-03-27 17:12:09  INFO      Input: 399 rows
+2026-03-27 17:12:09  INFO      ============================================================
+2026-03-27 17:12:09  INFO      [schema]     399 rows after column rename.
+2026-03-27 17:12:09  INFO      [types]      399 rows after type coercion.
+2026-03-27 17:12:09  INFO      [nulls]      No null required-field rows found.
+2026-03-27 17:12:09  INFO      [ranges]     Dropped 2 rows outside valid physical ranges. 397 rows remain.
+2026-03-27 17:12:09  INFO      [duplicates] No duplicate rows found.
+2026-03-27 17:12:09  INFO      [outliers]   'magnitude' — 1 rows outside [-0.20, 3.00] (IQR×1.5) — flagged as is_outlier=True (not dropped).
+2026-03-27 17:12:09  INFO      [outliers]   'depth_km' — 56 rows outside [-15.50, 33.86] (IQR×1.5) — flagged as is_outlier=True (not dropped).
+2026-03-27 17:12:09  INFO      Cleaning complete. Output: 397 rows.
+2026-03-27 17:12:09  INFO      ============================================================
+2026-03-27 17:12:09  INFO      STAGE 2 — Feature Engineering
+2026-03-27 17:12:09  INFO      ============================================================
+2026-03-27 17:12:09  INFO      [features]   Time features added (year, month, dow, hour, cyclic).
+2026-03-27 17:12:09  INFO      [features]   mag_category distribution: {'micro': 331, 'minor': 66}
+2026-03-27 17:12:09  INFO      [features]   depth_category distribution: {'shallow': 376, 'intermediate': 21}
+2026-03-27 17:12:09  INFO      [features]   distance_from_ref_km added (ref = Dublin, Ireland; min=6446 km, max=11455 km).
+2026-03-27 17:12:09  INFO      Feature engineering complete. Columns: ['raw_id', 'event_id', 'magnitude', 'magnitude_type', 'place', 'event_time', 'depth_km', 'latitude', 'longitude', 'alert', 'tsunami', 'sig', 'url', 'status', 'net', 'fetched_at', 'is_outlier', 'year', 'month', 'day_of_week', 'hour', 'is_weekend', 'hour_sin', 'hour_cos', 'month_sin', 'month_cos', 'mag_category', 'depth_category', 'distance_from_ref_km']
+2026-03-27 17:12:09  INFO      ============================================================
+2026-03-27 17:12:09  INFO      STAGE 3 — Transformations (Scaling & Encoding)
+2026-03-27 17:12:09  INFO      ============================================================
+2026-03-27 17:12:09  INFO      [transforms] Loaded existing scaler from 'scaler.pkl'.
+2026-03-27 17:12:09  INFO      [transforms] Min-Max scaling applied to: ['magnitude', 'depth_km', 'latitude', 'longitude'].
+2026-03-27 17:12:09  INFO      [transforms] Categorical encoding complete.
+2026-03-27 17:12:09  INFO      [transforms] Final column set (24 cols): ['raw_id', 'magnitude', 'latitude', 'longitude', 'depth_km', 'event_time', 'place', 'status', 'year', 'month', 'day_of_week', 'hour', 'is_weekend', 'hour_sin', 'hour_cos', 'month_sin', 'month_cos', 'mag_category', 'depth_category', 'distance_from_ref_km', 'magnitude_scaled', 'depth_scaled', 'latitude_scaled', 'longitude_scaled']
+2026-03-27 17:12:09  INFO      Transformations complete. Shape: (397, 24)
+2026-03-27 17:15:30  INFO      ╔══════════════════════════════════════════════════════════╗
+2026-03-27 17:15:30  INFO      ║     EARTHQUAKE DATA PREPROCESSING PIPELINE               ║
+2026-03-27 17:15:30  INFO      ║     Mode: FULL        Version: 1.0.0                   ║
+2026-03-27 17:15:30  INFO      ╚══════════════════════════════════════════════════════════╝
+2026-03-27 17:15:30  INFO      Table 'earthquakes_processed' is ready.
+2026-03-27 17:15:30  INFO      Loaded 399 rows from 'earthquakes'.
+2026-03-27 17:15:30  INFO      ============================================================
+2026-03-27 17:15:30  INFO      STAGE 1 — Data Cleaning & Validation
+2026-03-27 17:15:30  INFO      Input: 399 rows
+2026-03-27 17:15:30  INFO      ============================================================
+2026-03-27 17:15:30  INFO      [schema]     399 rows after column rename.
+2026-03-27 17:15:30  INFO      [types]      399 rows after type coercion.
+2026-03-27 17:15:30  INFO      [nulls]      No null required-field rows found.
+2026-03-27 17:15:30  INFO      [ranges]     Dropped 2 rows outside valid physical ranges. 397 rows remain.
+2026-03-27 17:15:30  INFO      [duplicates] No duplicate rows found.
+2026-03-27 17:15:30  INFO      [outliers]   'magnitude' — 1 rows outside [-0.20, 3.00] (IQR×1.5) — flagged as is_outlier=True (not dropped).
+2026-03-27 17:15:30  INFO      [outliers]   'depth_km' — 56 rows outside [-15.50, 33.86] (IQR×1.5) — flagged as is_outlier=True (not dropped).
+2026-03-27 17:15:30  INFO      Cleaning complete. Output: 397 rows.
+2026-03-27 17:15:30  INFO      ============================================================
+2026-03-27 17:15:30  INFO      STAGE 2 — Feature Engineering
+2026-03-27 17:15:30  INFO      ============================================================
+2026-03-27 17:15:30  INFO      [features]   Time features added (year, month, dow, hour, cyclic).
+2026-03-27 17:15:30  INFO      [features]   mag_category distribution: {'micro': 331, 'minor': 66}
+2026-03-27 17:15:30  INFO      [features]   depth_category distribution: {'shallow': 376, 'intermediate': 21}
+2026-03-27 17:15:30  INFO      [features]   distance_from_ref_km added (ref = Dublin, Ireland; min=6446 km, max=11455 km).
+2026-03-27 17:15:30  INFO      Feature engineering complete. Columns: ['raw_id', 'event_id', 'magnitude', 'magnitude_type', 'place', 'event_time', 'depth_km', 'latitude', 'longitude', 'alert', 'tsunami', 'sig', 'url', 'status', 'net', 'fetched_at', 'is_outlier', 'year', 'month', 'day_of_week', 'hour', 'is_weekend', 'hour_sin', 'hour_cos', 'month_sin', 'month_cos', 'mag_category', 'depth_category', 'distance_from_ref_km']
+2026-03-27 17:15:30  INFO      ============================================================
+2026-03-27 17:15:30  INFO      STAGE 3 — Transformations (Scaling & Encoding)
+2026-03-27 17:15:30  INFO      ============================================================
+2026-03-27 17:15:30  INFO      [transforms] Loaded existing scaler from 'scaler.pkl'.
+2026-03-27 17:15:31  INFO      [transforms] Min-Max scaling applied to: ['magnitude', 'depth_km', 'latitude', 'longitude'].
+2026-03-27 17:15:31  INFO      [transforms] Categorical encoding complete.
+2026-03-27 17:15:31  INFO      [transforms] Final column set (24 cols): ['raw_id', 'magnitude', 'latitude', 'longitude', 'depth_km', 'event_time', 'place', 'status', 'year', 'month', 'day_of_week', 'hour', 'is_weekend', 'hour_sin', 'hour_cos', 'month_sin', 'month_cos', 'mag_category', 'depth_category', 'distance_from_ref_km', 'magnitude_scaled', 'depth_scaled', 'latitude_scaled', 'longitude_scaled']
+2026-03-27 17:15:31  INFO      Transformations complete. Shape: (397, 24)
+2026-03-27 21:59:29  INFO      ╔══════════════════════════════════════════════════════════╗
+2026-03-27 21:59:29  INFO      ║     EARTHQUAKE DATA PREPROCESSING PIPELINE               ║
+2026-03-27 21:59:29  INFO      ║     Mode: FULL        Version: 1.0.0                   ║
+2026-03-27 21:59:29  INFO      ╚══════════════════════════════════════════════════════════╝
+2026-03-27 21:59:29  INFO      Table 'earthquakes_processed' is ready.
+2026-03-27 21:59:29  INFO      Loaded 438 rows from 'earthquakes'.
+2026-03-27 21:59:29  INFO      ============================================================
+2026-03-27 21:59:29  INFO      STAGE 1 — Data Cleaning & Validation
+2026-03-27 21:59:29  INFO      Input: 438 rows
+2026-03-27 21:59:29  INFO      ============================================================
+2026-03-27 21:59:29  INFO      [schema]     438 rows after column rename.
+2026-03-27 21:59:29  INFO      [types]      438 rows after type coercion.
+2026-03-27 21:59:29  INFO      [nulls]      No null required-field rows found.
+2026-03-27 21:59:29  INFO      [ranges]     Dropped 3 rows outside valid physical ranges. 435 rows remain.
+2026-03-27 21:59:30  INFO      [duplicates] No duplicate rows found.
+2026-03-27 21:59:30  INFO      [outliers]   'magnitude' — 1 rows outside [-0.20, 3.00] (IQR×1.5) — flagged as is_outlier=True (not dropped).
+2026-03-27 21:59:30  INFO      [outliers]   'depth_km' — 63 rows outside [-14.52, 32.50] (IQR×1.5) — flagged as is_outlier=True (not dropped).
+2026-03-27 21:59:30  INFO      Cleaning complete. Output: 435 rows.
+2026-03-27 21:59:30  INFO      ============================================================
+2026-03-27 21:59:30  INFO      STAGE 2 — Feature Engineering
+2026-03-27 21:59:30  INFO      ============================================================
+2026-03-27 21:59:30  INFO      [features]   Time features added (year, month, dow, hour, cyclic).
+2026-03-27 21:59:30  INFO      [features]   mag_category distribution: {'micro': 366, 'minor': 69}
+2026-03-27 21:59:30  INFO      [features]   depth_category distribution: {'shallow': 409, 'intermediate': 26}
+2026-03-27 21:59:30  INFO      [features]   distance_from_ref_km added (ref = Dublin, Ireland; min=6446 km, max=11455 km).
+2026-03-27 21:59:30  INFO      Feature engineering complete. Columns: ['raw_id', 'event_id', 'magnitude', 'magnitude_type', 'place', 'event_time', 'depth_km', 'latitude', 'longitude', 'alert', 'tsunami', 'sig', 'url', 'status', 'net', 'fetched_at', 'is_outlier', 'year', 'month', 'day_of_week', 'hour', 'is_weekend', 'hour_sin', 'hour_cos', 'month_sin', 'month_cos', 'mag_category', 'depth_category', 'distance_from_ref_km']
+2026-03-27 21:59:30  INFO      ============================================================
+2026-03-27 21:59:30  INFO      STAGE 3 — Transformations (Scaling & Encoding)
+2026-03-27 21:59:30  INFO      ============================================================
+2026-03-27 21:59:30  INFO      [transforms] Loaded existing scaler from 'scaler.pkl'.
+2026-03-27 21:59:30  INFO      [transforms] Min-Max scaling applied to: ['magnitude', 'depth_km', 'latitude', 'longitude'].
+2026-03-27 21:59:30  INFO      [transforms] Categorical encoding complete.
+2026-03-27 21:59:30  INFO      [transforms] Final column set (24 cols): ['raw_id', 'magnitude', 'latitude', 'longitude', 'depth_km', 'event_time', 'place', 'status', 'year', 'month', 'day_of_week', 'hour', 'is_weekend', 'hour_sin', 'hour_cos', 'month_sin', 'month_cos', 'mag_category', 'depth_category', 'distance_from_ref_km', 'magnitude_scaled', 'depth_scaled', 'latitude_scaled', 'longitude_scaled']
+2026-03-27 21:59:30  INFO      Transformations complete. Shape: (435, 24)
+2026-03-27 22:06:28  INFO      ╔══════════════════════════════════════════════════════════╗
+2026-03-27 22:06:28  INFO      ║     EARTHQUAKE DATA PREPROCESSING PIPELINE               ║
+2026-03-27 22:06:28  INFO      ║     Mode: FULL        Version: 1.0.0                   ║
+2026-03-27 22:06:28  INFO      ╚══════════════════════════════════════════════════════════╝
+2026-03-27 22:06:50  INFO      ╔══════════════════════════════════════════════════════════╗
+2026-03-27 22:06:50  INFO      ║     EARTHQUAKE DATA PREPROCESSING PIPELINE               ║
+2026-03-27 22:06:50  INFO      ║     Mode: FULL        Version: 1.0.0                   ║
+2026-03-27 22:06:50  INFO      ╚══════════════════════════════════════════════════════════╝
+2026-03-27 22:07:08  INFO      ╔══════════════════════════════════════════════════════════╗
+2026-03-27 22:07:08  INFO      ║     EARTHQUAKE DATA PREPROCESSING PIPELINE               ║
+2026-03-27 22:07:08  INFO      ║     Mode: FULL        Version: 1.0.0                   ║
+2026-03-27 22:07:08  INFO      ╚══════════════════════════════════════════════════════════╝
+2026-03-27 22:07:20  INFO      ╔══════════════════════════════════════════════════════════╗
+2026-03-27 22:07:20  INFO      ║     EARTHQUAKE DATA PREPROCESSING PIPELINE               ║
+2026-03-27 22:07:20  INFO      ║     Mode: FULL        Version: 1.0.0                   ║
+2026-03-27 22:07:20  INFO      ╚══════════════════════════════════════════════════════════╝
+2026-03-27 22:07:30  INFO      ╔══════════════════════════════════════════════════════════╗
+2026-03-27 22:07:30  INFO      ║     EARTHQUAKE DATA PREPROCESSING PIPELINE               ║
+2026-03-27 22:07:30  INFO      ║     Mode: FULL        Version: 1.0.0                   ║
+2026-03-27 22:07:30  INFO      ╚══════════════════════════════════════════════════════════╝
+2026-03-27 22:07:30  INFO      Table 'earthquakes_processed' is ready.
+2026-03-27 22:07:30  INFO      Loaded 441 rows from 'earthquakes'.
+2026-03-27 22:07:30  INFO      ============================================================
+2026-03-27 22:07:30  INFO      STAGE 1 — Data Cleaning & Validation
+2026-03-27 22:07:30  INFO      Input: 441 rows
+2026-03-27 22:07:30  INFO      ============================================================
+2026-03-27 22:07:30  INFO      [schema]     441 rows after column rename.
+2026-03-27 22:07:30  INFO      [types]      441 rows after type coercion.
+2026-03-27 22:07:30  INFO      [nulls]      No null required-field rows found.
+2026-03-27 22:07:30  INFO      [ranges]     Dropped 3 rows outside valid physical ranges. 438 rows remain.
+2026-03-27 22:07:30  INFO      [duplicates] No duplicate rows found.
+2026-03-27 22:07:30  INFO      [outliers]   'magnitude' — 1 rows outside [-0.20, 3.00] (IQR×1.5) — flagged as is_outlier=True (not dropped).
+2026-03-27 22:07:30  INFO      [outliers]   'depth_km' — 63 rows outside [-14.52, 32.29] (IQR×1.5) — flagged as is_outlier=True (not dropped).
+2026-03-27 22:07:30  INFO      Cleaning complete. Output: 438 rows.
+2026-03-27 22:07:30  INFO      ============================================================
+2026-03-27 22:07:30  INFO      STAGE 2 — Feature Engineering
+2026-03-27 22:07:30  INFO      ============================================================
+2026-03-27 22:07:30  INFO      [features]   Time features added (year, month, dow, hour, cyclic).
+2026-03-27 22:07:30  INFO      [features]   mag_category distribution: {'micro': 369, 'minor': 69}
+2026-03-27 22:07:30  INFO      [features]   depth_category distribution: {'shallow': 412, 'intermediate': 26}
+2026-03-27 22:07:30  INFO      [features]   distance_from_ref_km added (ref = Dublin, Ireland; min=6446 km, max=11455 km).
+2026-03-27 22:07:30  INFO      Feature engineering complete. Columns: ['raw_id', 'event_id', 'magnitude', 'mag_type', 'place', 'event_time', 'depth_km', 'latitude', 'longitude', 'alert', 'tsunami', 'sig', 'url', 'status', 'net', 'fetched_at', 'is_outlier', 'year', 'month', 'day_of_week', 'hour', 'is_weekend', 'hour_sin', 'hour_cos', 'month_sin', 'month_cos', 'mag_category', 'depth_category', 'distance_from_ref_km']
+2026-03-27 22:07:30  INFO      ============================================================
+2026-03-27 22:07:30  INFO      STAGE 3 — Transformations (Scaling & Encoding)
+2026-03-27 22:07:30  INFO      ============================================================
+2026-03-27 22:07:30  INFO      [transforms] Loaded existing scaler from 'scaler.pkl'.
+2026-03-27 22:07:30  INFO      [transforms] Min-Max scaling applied to: ['magnitude', 'depth_km', 'latitude', 'longitude'].
+2026-03-27 22:07:30  INFO      [transforms] mag_type one-hot encoded: ['magtype_md', 'magtype_ml']
+2026-03-27 22:07:30  INFO      [transforms] Categorical encoding complete.
+2026-03-27 22:07:30  INFO      [transforms] Final column set (27 cols): ['raw_id', 'magnitude', 'latitude', 'longitude', 'depth_km', 'event_time', 'place', 'mag_type', 'status', 'year', 'month', 'day_of_week', 'hour', 'is_weekend', 'hour_sin', 'hour_cos', 'month_sin', 'month_cos', 'mag_category', 'depth_category', 'distance_from_ref_km', 'magnitude_scaled', 'depth_scaled', 'latitude_scaled', 'longitude_scaled', 'magtype_md', 'magtype_ml']
+2026-03-27 22:07:30  INFO      Transformations complete. Shape: (438, 27)
+2026-03-27 22:09:22  INFO      ╔══════════════════════════════════════════════════════════╗
+2026-03-27 22:09:22  INFO      ║     EARTHQUAKE DATA PREPROCESSING PIPELINE               ║
+2026-03-27 22:09:22  INFO      ║     Mode: FULL        Version: 1.0.0                   ║
+2026-03-27 22:09:22  INFO      ╚══════════════════════════════════════════════════════════╝
+2026-03-27 22:09:22  INFO      Table 'earthquakes_processed' is ready.
+2026-03-27 22:09:22  INFO      Loaded 441 rows from 'earthquakes'.
+2026-03-27 22:09:22  INFO      ============================================================
+2026-03-27 22:09:22  INFO      STAGE 1 — Data Cleaning & Validation
+2026-03-27 22:09:22  INFO      Input: 441 rows
+2026-03-27 22:09:22  INFO      ============================================================
+2026-03-27 22:09:22  INFO      [schema]     441 rows after column rename.
+2026-03-27 22:09:22  INFO      [types]      441 rows after type coercion.
+2026-03-27 22:09:22  INFO      [nulls]      No null required-field rows found.
+2026-03-27 22:09:22  INFO      [ranges]     Dropped 3 rows outside valid physical ranges. 438 rows remain.
+2026-03-27 22:09:22  INFO      [duplicates] No duplicate rows found.
+2026-03-27 22:09:22  INFO      [outliers]   'magnitude' — 1 rows outside [-0.20, 3.00] (IQR×1.5) — flagged as is_outlier=True (not dropped).
+2026-03-27 22:09:22  INFO      [outliers]   'depth_km' — 63 rows outside [-14.52, 32.29] (IQR×1.5) — flagged as is_outlier=True (not dropped).
+2026-03-27 22:09:22  INFO      Cleaning complete. Output: 438 rows.
+2026-03-27 22:09:22  INFO      ============================================================
+2026-03-27 22:09:22  INFO      STAGE 2 — Feature Engineering
+2026-03-27 22:09:22  INFO      ============================================================
+2026-03-27 22:09:22  INFO      [features]   Time features added (year, month, dow, hour, cyclic).
+2026-03-27 22:09:22  INFO      [features]   mag_category distribution: {'micro': 369, 'minor': 69}
+2026-03-27 22:09:22  INFO      [features]   depth_category distribution: {'shallow': 412, 'intermediate': 26}
+2026-03-27 22:09:22  INFO      [features]   distance_from_ref_km added (ref = Dublin, Ireland; min=6446 km, max=11455 km).
+2026-03-27 22:09:22  INFO      Feature engineering complete. Columns: ['raw_id', 'event_id', 'magnitude', 'mag_type', 'place', 'event_time', 'depth_km', 'latitude', 'longitude', 'alert', 'tsunami', 'sig', 'url', 'status', 'net', 'fetched_at', 'is_outlier', 'year', 'month', 'day_of_week', 'hour', 'is_weekend', 'hour_sin', 'hour_cos', 'month_sin', 'month_cos', 'mag_category', 'depth_category', 'distance_from_ref_km']
+2026-03-27 22:09:22  INFO      ============================================================
+2026-03-27 22:09:22  INFO      STAGE 3 — Transformations (Scaling & Encoding)
+2026-03-27 22:09:22  INFO      ============================================================
+2026-03-27 22:09:22  INFO      [transforms] Loaded existing scaler from 'scaler.pkl'.
+2026-03-27 22:09:22  INFO      [transforms] Min-Max scaling applied to: ['magnitude', 'depth_km', 'latitude', 'longitude'].
+2026-03-27 22:09:22  INFO      [transforms] mag_type one-hot encoded: ['magtype_md', 'magtype_ml']
+2026-03-27 22:09:22  INFO      [transforms] Categorical encoding complete.
+2026-03-27 22:09:22  INFO      [transforms] Final column set (25 cols): ['raw_id', 'magnitude', 'latitude', 'longitude', 'depth_km', 'event_time', 'place', 'mag_type', 'status', 'year', 'month', 'day_of_week', 'hour', 'is_weekend', 'hour_sin', 'hour_cos', 'month_sin', 'month_cos', 'mag_category', 'depth_category', 'distance_from_ref_km', 'magnitude_scaled', 'depth_scaled', 'latitude_scaled', 'longitude_scaled']
+2026-03-27 22:09:22  INFO      Transformations complete. Shape: (438, 25)
+2026-03-27 22:09:22  INFO      Upserted 438 rows into 'earthquakes_processed'.
+2026-03-27 22:44:02  INFO      ╔══════════════════════════════════════════════════════════╗
+2026-03-27 22:44:02  INFO      ║     EARTHQUAKE DATA PREPROCESSING PIPELINE               ║
+2026-03-27 22:44:02  INFO      ║     Mode: FULL        Version: 1.0.0                   ║
+2026-03-27 22:44:02  INFO      ╚══════════════════════════════════════════════════════════╝
+2026-03-27 22:44:02  INFO      Table 'earthquakes_processed' is ready.
+2026-03-27 22:44:02  INFO      Loaded 451 rows from 'earthquakes'.
+2026-03-27 22:44:02  INFO      ============================================================
+2026-03-27 22:44:02  INFO      STAGE 1 — Data Cleaning & Validation
+2026-03-27 22:44:02  INFO      Input: 451 rows
+2026-03-27 22:44:02  INFO      ============================================================
+2026-03-27 22:44:02  INFO      [schema]     451 rows after column rename.
+2026-03-27 22:44:02  INFO      [types]      451 rows after type coercion.
+2026-03-27 22:44:02  INFO      [nulls]      No null required-field rows found.
+2026-03-27 22:44:02  INFO      [ranges]     Dropped 4 rows outside valid physical ranges. 447 rows remain.
+2026-03-27 22:44:02  INFO      [duplicates] No duplicate rows found.
+2026-03-27 22:44:02  INFO      [outliers]   'magnitude' — 3 rows outside [-0.20, 3.00] (IQR×1.5) — flagged as is_outlier=True (not dropped).
+2026-03-27 22:44:02  INFO      [outliers]   'depth_km' — 64 rows outside [-14.35, 31.92] (IQR×1.5) — flagged as is_outlier=True (not dropped).
+2026-03-27 22:44:02  INFO      Cleaning complete. Output: 447 rows.
+2026-03-27 22:44:02  INFO      ============================================================
+2026-03-27 22:44:02  INFO      STAGE 2 — Feature Engineering
+2026-03-27 22:44:02  INFO      ============================================================
+2026-03-27 22:44:02  INFO      [features]   Time features added (year, month, dow, hour, cyclic).
+2026-03-27 22:44:02  INFO      [features]   mag_category distribution: {'micro': 375, 'minor': 70, 'light': 2}
+2026-03-27 22:44:02  INFO      [features]   depth_category distribution: {'shallow': 420, 'intermediate': 27}
+2026-03-27 22:44:02  INFO      [features]   distance_from_ref_km added (ref = Dublin, Ireland; min=6446 km, max=11455 km).
+2026-03-27 22:44:02  INFO      Feature engineering complete. Columns: ['raw_id', 'event_id', 'magnitude', 'mag_type', 'place', 'event_time', 'depth_km', 'latitude', 'longitude', 'alert', 'tsunami', 'sig', 'url', 'status', 'net', 'fetched_at', 'is_outlier', 'year', 'month', 'day_of_week', 'hour', 'is_weekend', 'hour_sin', 'hour_cos', 'month_sin', 'month_cos', 'mag_category', 'depth_category', 'distance_from_ref_km']
+2026-03-27 22:44:02  INFO      ============================================================
+2026-03-27 22:44:02  INFO      STAGE 3 — Transformations (Scaling & Encoding)
+2026-03-27 22:44:02  INFO      ============================================================
+2026-03-27 22:44:02  INFO      [transforms] Loaded existing scaler from 'scaler.pkl'.
+2026-03-27 22:44:02  INFO      [transforms] Min-Max scaling applied to: ['magnitude', 'depth_km', 'latitude', 'longitude'].
+2026-03-27 22:44:02  INFO      [transforms] mag_type one-hot encoded: ['magtype_md', 'magtype_ml', 'magtype_mlr', 'magtype_mw']
+2026-03-27 22:44:02  INFO      [transforms] Categorical encoding complete.
+2026-03-27 22:44:02  INFO      [transforms] Final column set (25 cols): ['raw_id', 'magnitude', 'latitude', 'longitude', 'depth_km', 'event_time', 'place', 'mag_type', 'status', 'year', 'month', 'day_of_week', 'hour', 'is_weekend', 'hour_sin', 'hour_cos', 'month_sin', 'month_cos', 'mag_category', 'depth_category', 'distance_from_ref_km', 'magnitude_scaled', 'depth_scaled', 'latitude_scaled', 'longitude_scaled']
+2026-03-27 22:44:02  INFO      Transformations complete. Shape: (447, 25)
+2026-03-27 22:44:02  INFO      Upserted 447 rows into 'earthquakes_processed'.
+2026-03-27 22:50:55  INFO      ╔══════════════════════════════════════════════════════════╗
+2026-03-27 22:50:55  INFO      ║     EARTHQUAKE DATA PREPROCESSING PIPELINE               ║
+2026-03-27 22:50:55  INFO      ║     Mode: FULL        Version: 1.0.0                   ║
+2026-03-27 22:50:55  INFO      ╚══════════════════════════════════════════════════════════╝
+2026-03-27 22:50:55  INFO      Table 'earthquakes_processed' is ready.
+2026-03-27 22:50:55  INFO      Loaded 453 rows from 'earthquakes'.
+2026-03-27 22:50:55  INFO      ============================================================
+2026-03-27 22:50:55  INFO      STAGE 1 — Data Cleaning & Validation
+2026-03-27 22:50:55  INFO      Input: 453 rows
+2026-03-27 22:50:55  INFO      ============================================================
+2026-03-27 22:50:55  INFO      [schema]     453 rows after column rename.
+2026-03-27 22:50:55  INFO      [types]      453 rows after type coercion.
+2026-03-27 22:50:55  INFO      [nulls]      No null required-field rows found.
+2026-03-27 22:50:55  INFO      [ranges]     Dropped 4 rows outside valid physical ranges. 449 rows remain.
+2026-03-27 22:50:55  INFO      [duplicates] No duplicate rows found.
+2026-03-27 22:50:55  INFO      [outliers]   'magnitude' — 3 rows outside [-0.20, 3.00] (IQR×1.5) — flagged as is_outlier=True (not dropped).
+2026-03-27 22:50:55  INFO      [outliers]   'depth_km' — 65 rows outside [-14.53, 32.23] (IQR×1.5) — flagged as is_outlier=True (not dropped).
+2026-03-27 22:50:55  INFO      Cleaning complete. Output: 449 rows.
+2026-03-27 22:50:55  INFO      ============================================================
+2026-03-27 22:50:55  INFO      STAGE 2 — Feature Engineering
+2026-03-27 22:50:55  INFO      ============================================================
+2026-03-27 22:50:55  INFO      [features]   Time features added (year, month, dow, hour, cyclic).
+2026-03-27 22:50:55  INFO      [features]   mag_category distribution: {'micro': 376, 'minor': 71, 'light': 2}
+2026-03-27 22:50:55  INFO      [features]   depth_category distribution: {'shallow': 422, 'intermediate': 27}
+2026-03-27 22:50:55  INFO      [features]   distance_from_ref_km added (ref = Dublin, Ireland; min=6446 km, max=11455 km).
+2026-03-27 22:50:55  INFO      Feature engineering complete. Columns: ['raw_id', 'event_id', 'magnitude', 'mag_type', 'place', 'event_time', 'depth_km', 'latitude', 'longitude', 'alert', 'tsunami', 'sig', 'url', 'status', 'net', 'fetched_at', 'is_outlier', 'year', 'month', 'day_of_week', 'hour', 'is_weekend', 'hour_sin', 'hour_cos', 'month_sin', 'month_cos', 'mag_category', 'depth_category', 'distance_from_ref_km']
+2026-03-27 22:50:55  INFO      ============================================================
+2026-03-27 22:50:55  INFO      STAGE 3 — Transformations (Scaling & Encoding)
+2026-03-27 22:50:55  INFO      ============================================================
+2026-03-27 22:50:55  INFO      [transforms] Loaded existing scaler from 'scaler.pkl'.
+2026-03-27 22:50:55  INFO      [transforms] Min-Max scaling applied to: ['magnitude', 'depth_km', 'latitude', 'longitude'].
+2026-03-27 22:50:55  INFO      [transforms] mag_type one-hot encoded: ['magtype_md', 'magtype_ml', 'magtype_mlr', 'magtype_mw']
+2026-03-27 22:50:55  INFO      [transforms] Categorical encoding complete.
+2026-03-27 22:50:55  INFO      [transforms] Final column set (25 cols): ['raw_id', 'magnitude', 'latitude', 'longitude', 'depth_km', 'event_time', 'place', 'mag_type', 'status', 'year', 'month', 'day_of_week', 'hour', 'is_weekend', 'hour_sin', 'hour_cos', 'month_sin', 'month_cos', 'mag_category', 'depth_category', 'distance_from_ref_km', 'magnitude_scaled', 'depth_scaled', 'latitude_scaled', 'longitude_scaled']
+2026-03-27 22:50:55  INFO      Transformations complete. Shape: (449, 25)
+2026-03-27 22:50:55  INFO      Upserted 449 rows into 'earthquakes_processed'.
+2026-03-27 22:54:37  INFO      ╔══════════════════════════════════════════════════════════╗
+2026-03-27 22:54:37  INFO      ║     EARTHQUAKE DATA PREPROCESSING PIPELINE               ║
+2026-03-27 22:54:37  INFO      ║     Mode: FULL        Version: 1.0.0                   ║
+2026-03-27 22:54:37  INFO      ╚══════════════════════════════════════════════════════════╝
+2026-03-27 22:54:37  INFO      Table 'earthquakes_processed' is ready.
+2026-03-27 22:54:37  INFO      Loaded 453 rows from 'earthquakes'.
+2026-03-27 22:54:37  INFO      ============================================================
+2026-03-27 22:54:37  INFO      STAGE 1 — Data Cleaning & Validation
+2026-03-27 22:54:37  INFO      Input: 453 rows
+2026-03-27 22:54:37  INFO      ============================================================
+2026-03-27 22:54:37  INFO      [schema]     453 rows after column rename.
+2026-03-27 22:54:37  INFO      [types]      453 rows after type coercion.
+2026-03-27 22:54:37  INFO      [nulls]      No null required-field rows found.
+2026-03-27 22:54:37  INFO      [ranges]     Dropped 4 rows outside valid physical ranges. 449 rows remain.
+2026-03-27 22:54:37  INFO      [duplicates] No duplicate rows found.
+2026-03-27 22:54:37  INFO      [outliers]   'magnitude' — 3 rows outside [-0.20, 3.00] (IQR×1.5) — flagged as is_outlier=True (not dropped).
+2026-03-27 22:54:37  INFO      [outliers]   'depth_km' — 65 rows outside [-14.53, 32.23] (IQR×1.5) — flagged as is_outlier=True (not dropped).
+2026-03-27 22:54:37  INFO      Cleaning complete. Output: 449 rows.
+2026-03-27 22:54:37  INFO      ============================================================
+2026-03-27 22:54:37  INFO      STAGE 2 — Feature Engineering
+2026-03-27 22:54:37  INFO      ============================================================
+2026-03-27 22:54:37  INFO      [features]   Time features added (year, month, dow, hour, cyclic).
+2026-03-27 22:54:37  INFO      [features]   mag_category distribution: {'micro': 376, 'minor': 71, 'light': 2}
+2026-03-27 22:54:37  INFO      [features]   depth_category distribution: {'shallow': 422, 'intermediate': 27}
+2026-03-27 22:54:37  INFO      [features]   distance_from_ref_km added (ref = Dublin, Ireland; min=6446 km, max=11455 km).
+2026-03-27 22:54:37  INFO      Feature engineering complete. Columns: ['raw_id', 'event_id', 'magnitude', 'mag_type', 'place', 'event_time', 'depth_km', 'latitude', 'longitude', 'alert', 'tsunami', 'sig', 'url', 'status', 'net', 'fetched_at', 'is_outlier', 'year', 'month', 'day_of_week', 'hour', 'is_weekend', 'hour_sin', 'hour_cos', 'month_sin', 'month_cos', 'mag_category', 'depth_category', 'distance_from_ref_km']
+2026-03-27 22:54:37  INFO      ============================================================
+2026-03-27 22:54:37  INFO      STAGE 3 — Transformations (Scaling & Encoding)
+2026-03-27 22:54:37  INFO      ============================================================
+2026-03-27 22:54:37  INFO      [transforms] Loaded existing scaler from 'scaler.pkl'.
+2026-03-27 22:54:37  INFO      [transforms] Min-Max scaling applied to: ['magnitude', 'depth_km', 'latitude', 'longitude'].
+2026-03-27 22:54:37  INFO      [transforms] mag_type one-hot encoded: ['magtype_md', 'magtype_ml', 'magtype_mlr', 'magtype_mw']
+2026-03-27 22:54:37  INFO      [transforms] Categorical encoding complete.
+2026-03-27 22:54:37  INFO      [transforms] Final column set (25 cols): ['raw_id', 'magnitude', 'latitude', 'longitude', 'depth_km', 'event_time', 'place', 'mag_type', 'status', 'year', 'month', 'day_of_week', 'hour', 'is_weekend', 'hour_sin', 'hour_cos', 'month_sin', 'month_cos', 'mag_category', 'depth_category', 'distance_from_ref_km', 'magnitude_scaled', 'depth_scaled', 'latitude_scaled', 'longitude_scaled']
+2026-03-27 22:54:37  INFO      Transformations complete. Shape: (449, 25)
+2026-03-27 22:54:37  INFO      Upserted 449 rows into 'earthquakes_processed'.
+2026-03-27 22:54:47  INFO      ╔══════════════════════════════════════════════════════════╗
+2026-03-27 22:54:47  INFO      ║     EARTHQUAKE DATA PREPROCESSING PIPELINE               ║
+2026-03-27 22:54:47  INFO      ║     Mode: INCREMENTAL  Version: 1.0.0                   ║
+2026-03-27 22:54:47  INFO      ╚══════════════════════════════════════════════════════════╝
+2026-03-27 22:54:47  INFO      Table 'earthquakes_processed' is ready.
+2026-03-27 22:54:47  INFO      Incremental mode: loading rows with raw_id > 677
+2026-03-27 22:54:47  INFO      Loaded 0 new rows (id > 677).
+2026-03-27 22:54:47  INFO      No new data to process. Pipeline exiting.
+2026-03-27 22:54:57  INFO      ╔══════════════════════════════════════════════════════════╗
+2026-03-27 22:54:57  INFO      ║     EARTHQUAKE DATA PREPROCESSING PIPELINE               ║
+2026-03-27 22:54:57  INFO      ║     Mode: FULL        Version: 1.0.0                   ║
+2026-03-27 22:54:57  INFO      ╚══════════════════════════════════════════════════════════╝
+2026-03-27 22:54:57  INFO      Table 'earthquakes_processed' is ready.
+2026-03-27 22:54:57  INFO      Loaded 453 rows from 'earthquakes'.
+2026-03-27 22:54:57  INFO      ============================================================
+2026-03-27 22:54:57  INFO      STAGE 1 — Data Cleaning & Validation
+2026-03-27 22:54:57  INFO      Input: 453 rows
+2026-03-27 22:54:57  INFO      ============================================================
+2026-03-27 22:54:57  INFO      [schema]     453 rows after column rename.
+2026-03-27 22:54:57  INFO      [types]      453 rows after type coercion.
+2026-03-27 22:54:57  INFO      [nulls]      No null required-field rows found.
+2026-03-27 22:54:57  INFO      [ranges]     Dropped 4 rows outside valid physical ranges. 449 rows remain.
+2026-03-27 22:54:57  INFO      [duplicates] No duplicate rows found.
+2026-03-27 22:54:57  INFO      [outliers]   'magnitude' — 3 rows outside [-0.20, 3.00] (IQR×1.5) — flagged as is_outlier=True (not dropped).
+2026-03-27 22:54:57  INFO      [outliers]   'depth_km' — 65 rows outside [-14.53, 32.23] (IQR×1.5) — flagged as is_outlier=True (not dropped).
+2026-03-27 22:54:57  INFO      Cleaning complete. Output: 449 rows.
+2026-03-27 22:54:57  INFO      ============================================================
+2026-03-27 22:54:57  INFO      STAGE 2 — Feature Engineering
+2026-03-27 22:54:57  INFO      ============================================================
+2026-03-27 22:54:57  INFO      [features]   Time features added (year, month, dow, hour, cyclic).
+2026-03-27 22:54:57  INFO      [features]   mag_category distribution: {'micro': 376, 'minor': 71, 'light': 2}
+2026-03-27 22:54:57  INFO      [features]   depth_category distribution: {'shallow': 422, 'intermediate': 27}
+2026-03-27 22:54:57  INFO      [features]   distance_from_ref_km added (ref = Dublin, Ireland; min=6446 km, max=11455 km).
+2026-03-27 22:54:57  INFO      Feature engineering complete. Columns: ['raw_id', 'event_id', 'magnitude', 'mag_type', 'place', 'event_time', 'depth_km', 'latitude', 'longitude', 'alert', 'tsunami', 'sig', 'url', 'status', 'net', 'fetched_at', 'is_outlier', 'year', 'month', 'day_of_week', 'hour', 'is_weekend', 'hour_sin', 'hour_cos', 'month_sin', 'month_cos', 'mag_category', 'depth_category', 'distance_from_ref_km']
+2026-03-27 22:54:57  INFO      ============================================================
+2026-03-27 22:54:57  INFO      STAGE 3 — Transformations (Scaling & Encoding)
+2026-03-27 22:54:57  INFO      ============================================================
+2026-03-27 22:54:57  INFO      [transforms] Loaded existing scaler from 'scaler.pkl'.
+2026-03-27 22:54:57  INFO      [transforms] Min-Max scaling applied to: ['magnitude', 'depth_km', 'latitude', 'longitude'].
+2026-03-27 22:54:57  INFO      [transforms] mag_type one-hot encoded: ['magtype_md', 'magtype_ml', 'magtype_mlr', 'magtype_mw']
+2026-03-27 22:54:57  INFO      [transforms] Categorical encoding complete.
+2026-03-27 22:54:57  INFO      [transforms] Final column set (25 cols): ['raw_id', 'magnitude', 'latitude', 'longitude', 'depth_km', 'event_time', 'place', 'mag_type', 'status', 'year', 'month', 'day_of_week', 'hour', 'is_weekend', 'hour_sin', 'hour_cos', 'month_sin', 'month_cos', 'mag_category', 'depth_category', 'distance_from_ref_km', 'magnitude_scaled', 'depth_scaled', 'latitude_scaled', 'longitude_scaled']
+2026-03-27 22:54:57  INFO      Transformations complete. Shape: (449, 25)
+2026-03-27 22:54:57  INFO      Upserted 449 rows into 'earthquakes_processed'.
+2026-03-27 22:59:12  INFO      ╔══════════════════════════════════════════════════════════╗
+2026-03-27 22:59:12  INFO      ║     EARTHQUAKE DATA PREPROCESSING PIPELINE               ║
+2026-03-27 22:59:12  INFO      ║     Mode: FULL        Version: 1.0.0                   ║
+2026-03-27 22:59:12  INFO      ╚══════════════════════════════════════════════════════════╝
+2026-03-27 22:59:12  INFO      Table 'earthquakes_processed' is ready.
+2026-03-27 22:59:12  INFO      Loaded 453 rows from 'earthquakes'.
+2026-03-27 22:59:12  INFO      ============================================================
+2026-03-27 22:59:12  INFO      STAGE 1 — Data Cleaning & Validation
+2026-03-27 22:59:12  INFO      Input: 453 rows
+2026-03-27 22:59:12  INFO      ============================================================
+2026-03-27 22:59:12  INFO      [schema]     453 rows after column rename.
+2026-03-27 22:59:12  INFO      [types]      453 rows after type coercion.
+2026-03-27 22:59:12  INFO      [nulls]      No null required-field rows found.
+2026-03-27 22:59:12  INFO      [ranges]     Dropped 4 rows outside valid physical ranges. 449 rows remain.
+2026-03-27 22:59:12  INFO      [duplicates] No duplicate rows found.
+2026-03-27 22:59:12  INFO      [outliers]   'magnitude' — 3 rows outside [-0.20, 3.00] (IQR×1.5) — flagged as is_outlier=True (not dropped).
+2026-03-27 22:59:12  INFO      [outliers]   'depth_km' — 65 rows outside [-14.53, 32.23] (IQR×1.5) — flagged as is_outlier=True (not dropped).
+2026-03-27 22:59:12  INFO      Cleaning complete. Output: 449 rows.
+2026-03-27 22:59:12  INFO      ============================================================
+2026-03-27 22:59:12  INFO      STAGE 2 — Feature Engineering
+2026-03-27 22:59:12  INFO      ============================================================
+2026-03-27 22:59:12  INFO      [features]   Time features added (year, month, dow, hour, cyclic).
+2026-03-27 22:59:12  INFO      [features]   mag_category distribution: {'micro': 376, 'minor': 71, 'light': 2}
+2026-03-27 22:59:12  INFO      [features]   depth_category distribution: {'shallow': 422, 'intermediate': 27}
+2026-03-27 22:59:12  INFO      [features]   distance_from_ref_km added (ref = Dublin, Ireland; min=6446 km, max=11455 km).
+2026-03-27 22:59:12  INFO      Feature engineering complete. Columns: ['raw_id', 'event_id', 'magnitude', 'mag_type', 'place', 'event_time', 'depth_km', 'latitude', 'longitude', 'alert', 'tsunami', 'sig', 'url', 'status', 'net', 'fetched_at', 'is_outlier', 'year', 'month', 'day_of_week', 'hour', 'is_weekend', 'hour_sin', 'hour_cos', 'month_sin', 'month_cos', 'mag_category', 'depth_category', 'distance_from_ref_km']
+2026-03-27 22:59:12  INFO      ============================================================
+2026-03-27 22:59:12  INFO      STAGE 3 — Transformations (Scaling & Encoding)
+2026-03-27 22:59:12  INFO      ============================================================
+2026-03-27 22:59:12  INFO      [transforms] Loaded existing scaler from 'scaler.pkl'.
+2026-03-27 22:59:12  INFO      [transforms] Min-Max scaling applied to: ['magnitude', 'depth_km', 'latitude', 'longitude'].
+2026-03-27 22:59:12  INFO      [transforms] mag_type one-hot encoded: ['magtype_md', 'magtype_ml', 'magtype_mlr', 'magtype_mw']
+2026-03-27 22:59:12  INFO      [transforms] Categorical encoding complete.
+2026-03-27 22:59:12  INFO      [transforms] Final column set (25 cols): ['raw_id', 'magnitude', 'latitude', 'longitude', 'depth_km', 'event_time', 'place', 'mag_type', 'status', 'year', 'month', 'day_of_week', 'hour', 'is_weekend', 'hour_sin', 'hour_cos', 'month_sin', 'month_cos', 'mag_category', 'depth_category', 'distance_from_ref_km', 'magnitude_scaled', 'depth_scaled', 'latitude_scaled', 'longitude_scaled']
+2026-03-27 22:59:12  INFO      Transformations complete. Shape: (449, 25)
+2026-03-27 22:59:12  INFO      Upserted 449 rows into 'earthquakes_processed'.
+2026-03-27 22:59:38  INFO      ╔══════════════════════════════════════════════════════════╗
+2026-03-27 22:59:38  INFO      ║     EARTHQUAKE DATA PREPROCESSING PIPELINE               ║
+2026-03-27 22:59:38  INFO      ║     Mode: FULL        Version: 1.0.0                   ║
+2026-03-27 22:59:38  INFO      ╚══════════════════════════════════════════════════════════╝
+2026-03-27 22:59:38  INFO      Table 'earthquakes_processed' is ready.
+2026-03-27 22:59:38  INFO      Loaded 453 rows from 'earthquakes'.
+2026-03-27 22:59:38  INFO      ============================================================
+2026-03-27 22:59:38  INFO      STAGE 1 — Data Cleaning & Validation
+2026-03-27 22:59:38  INFO      Input: 453 rows
+2026-03-27 22:59:38  INFO      ============================================================
+2026-03-27 22:59:38  INFO      [schema]     453 rows after column rename.
+2026-03-27 22:59:38  INFO      [types]      453 rows after type coercion.
+2026-03-27 22:59:38  INFO      [nulls]      No null required-field rows found.
+2026-03-27 22:59:38  INFO      [ranges]     Dropped 4 rows outside valid physical ranges. 449 rows remain.
+2026-03-27 22:59:38  INFO      [duplicates] No duplicate rows found.
+2026-03-27 22:59:38  INFO      [outliers]   'magnitude' — 3 rows outside [-0.20, 3.00] (IQR×1.5) — flagged as is_outlier=True (not dropped).
+2026-03-27 22:59:38  INFO      [outliers]   'depth_km' — 65 rows outside [-14.53, 32.23] (IQR×1.5) — flagged as is_outlier=True (not dropped).
+2026-03-27 22:59:38  INFO      Cleaning complete. Output: 449 rows.
+2026-03-27 22:59:38  INFO      ============================================================
+2026-03-27 22:59:38  INFO      STAGE 2 — Feature Engineering
+2026-03-27 22:59:38  INFO      ============================================================
+2026-03-27 22:59:38  INFO      [features]   Time features added (year, month, dow, hour, cyclic).
+2026-03-27 22:59:38  INFO      [features]   mag_category distribution: {'micro': 376, 'minor': 71, 'light': 2}
+2026-03-27 22:59:38  INFO      [features]   depth_category distribution: {'shallow': 422, 'intermediate': 27}
+2026-03-27 22:59:38  INFO      [features]   distance_from_ref_km added (ref = Dublin, Ireland; min=6446 km, max=11455 km).
+2026-03-27 22:59:38  INFO      Feature engineering complete. Columns: ['raw_id', 'event_id', 'magnitude', 'mag_type', 'place', 'event_time', 'depth_km', 'latitude', 'longitude', 'alert', 'tsunami', 'sig', 'url', 'status', 'net', 'fetched_at', 'is_outlier', 'year', 'month', 'day_of_week', 'hour', 'is_weekend', 'hour_sin', 'hour_cos', 'month_sin', 'month_cos', 'mag_category', 'depth_category', 'distance_from_ref_km']
+2026-03-27 22:59:38  INFO      ============================================================
+2026-03-27 22:59:38  INFO      STAGE 3 — Transformations (Scaling & Encoding)
+2026-03-27 22:59:38  INFO      ============================================================
+2026-03-27 22:59:38  INFO      [transforms] Loaded existing scaler from 'scaler.pkl'.
+2026-03-27 22:59:38  INFO      [transforms] Min-Max scaling applied to: ['magnitude', 'depth_km', 'latitude', 'longitude'].
+2026-03-27 22:59:38  INFO      [transforms] mag_type one-hot encoded: ['magtype_md', 'magtype_ml', 'magtype_mlr', 'magtype_mw']
+2026-03-27 22:59:38  INFO      [transforms] Categorical encoding complete.
+2026-03-27 22:59:38  INFO      [transforms] Final column set (25 cols): ['raw_id', 'magnitude', 'latitude', 'longitude', 'depth_km', 'event_time', 'place', 'mag_type', 'status', 'year', 'month', 'day_of_week', 'hour', 'is_weekend', 'hour_sin', 'hour_cos', 'month_sin', 'month_cos', 'mag_category', 'depth_category', 'distance_from_ref_km', 'magnitude_scaled', 'depth_scaled', 'latitude_scaled', 'longitude_scaled']
+2026-03-27 22:59:38  INFO      Transformations complete. Shape: (449, 25)
+2026-03-27 22:59:38  INFO      Upserted 449 rows into 'earthquakes_processed'.
+2026-03-27 22:59:42  INFO      ╔══════════════════════════════════════════════════════════╗
+2026-03-27 22:59:42  INFO      ║     EARTHQUAKE DATA PREPROCESSING PIPELINE               ║
+2026-03-27 22:59:42  INFO      ║     Mode: FULL        Version: 1.0.0                   ║
+2026-03-27 22:59:42  INFO      ╚══════════════════════════════════════════════════════════╝
+2026-03-27 22:59:42  INFO      Table 'earthquakes_processed' is ready.
+2026-03-27 22:59:42  INFO      Loaded 453 rows from 'earthquakes'.
+2026-03-27 22:59:42  INFO      ============================================================
+2026-03-27 22:59:42  INFO      STAGE 1 — Data Cleaning & Validation
+2026-03-27 22:59:42  INFO      Input: 453 rows
+2026-03-27 22:59:42  INFO      ============================================================
+2026-03-27 22:59:42  INFO      [schema]     453 rows after column rename.
+2026-03-27 22:59:42  INFO      [types]      453 rows after type coercion.
+2026-03-27 22:59:42  INFO      [nulls]      No null required-field rows found.
+2026-03-27 22:59:42  INFO      [ranges]     Dropped 4 rows outside valid physical ranges. 449 rows remain.
+2026-03-27 22:59:42  INFO      [duplicates] No duplicate rows found.
+2026-03-27 22:59:42  INFO      [outliers]   'magnitude' — 3 rows outside [-0.20, 3.00] (IQR×1.5) — flagged as is_outlier=True (not dropped).
+2026-03-27 22:59:42  INFO      [outliers]   'depth_km' — 65 rows outside [-14.53, 32.23] (IQR×1.5) — flagged as is_outlier=True (not dropped).
+2026-03-27 22:59:42  INFO      Cleaning complete. Output: 449 rows.
+2026-03-27 22:59:42  INFO      ============================================================
+2026-03-27 22:59:42  INFO      STAGE 2 — Feature Engineering
+2026-03-27 22:59:42  INFO      ============================================================
+2026-03-27 22:59:42  INFO      [features]   Time features added (year, month, dow, hour, cyclic).
+2026-03-27 22:59:42  INFO      [features]   mag_category distribution: {'micro': 376, 'minor': 71, 'light': 2}
+2026-03-27 22:59:42  INFO      [features]   depth_category distribution: {'shallow': 422, 'intermediate': 27}
+2026-03-27 22:59:42  INFO      [features]   distance_from_ref_km added (ref = Dublin, Ireland; min=6446 km, max=11455 km).
+2026-03-27 22:59:42  INFO      Feature engineering complete. Columns: ['raw_id', 'event_id', 'magnitude', 'mag_type', 'place', 'event_time', 'depth_km', 'latitude', 'longitude', 'alert', 'tsunami', 'sig', 'url', 'status', 'net', 'fetched_at', 'is_outlier', 'year', 'month', 'day_of_week', 'hour', 'is_weekend', 'hour_sin', 'hour_cos', 'month_sin', 'month_cos', 'mag_category', 'depth_category', 'distance_from_ref_km']
+2026-03-27 22:59:42  INFO      ============================================================
+2026-03-27 22:59:42  INFO      STAGE 3 — Transformations (Scaling & Encoding)
+2026-03-27 22:59:42  INFO      ============================================================
+2026-03-27 22:59:42  INFO      [transforms] Loaded existing scaler from 'scaler.pkl'.
+2026-03-27 22:59:42  INFO      [transforms] Min-Max scaling applied to: ['magnitude', 'depth_km', 'latitude', 'longitude'].
+2026-03-27 22:59:42  INFO      [transforms] mag_type one-hot encoded: ['magtype_md', 'magtype_ml', 'magtype_mlr', 'magtype_mw']
+2026-03-27 22:59:42  INFO      [transforms] Categorical encoding complete.
+2026-03-27 22:59:42  INFO      [transforms] Final column set (25 cols): ['raw_id', 'magnitude', 'latitude', 'longitude', 'depth_km', 'event_time', 'place', 'mag_type', 'status', 'year', 'month', 'day_of_week', 'hour', 'is_weekend', 'hour_sin', 'hour_cos', 'month_sin', 'month_cos', 'mag_category', 'depth_category', 'distance_from_ref_km', 'magnitude_scaled', 'depth_scaled', 'latitude_scaled', 'longitude_scaled']
+2026-03-27 22:59:42  INFO      Transformations complete. Shape: (449, 25)
+2026-03-27 22:59:42  INFO      Upserted 449 rows into 'earthquakes_processed'.
+2026-03-27 23:01:49  INFO      ╔══════════════════════════════════════════════════════════╗
+2026-03-27 23:01:49  INFO      ║     EARTHQUAKE DATA PREPROCESSING PIPELINE               ║
+2026-03-27 23:01:49  INFO      ║     Mode: FULL        Version: 1.0.0                   ║
+2026-03-27 23:01:49  INFO      ╚══════════════════════════════════════════════════════════╝
+2026-03-27 23:01:49  INFO      Table 'earthquakes_processed' is ready.
+2026-03-27 23:01:49  INFO      Loaded 453 rows from 'earthquakes'.
+2026-03-27 23:01:49  INFO      ============================================================
+2026-03-27 23:01:49  INFO      STAGE 1 — Data Cleaning & Validation
+2026-03-27 23:01:49  INFO      Input: 453 rows
+2026-03-27 23:01:49  INFO      ============================================================
+2026-03-27 23:01:49  INFO      [schema]     453 rows after column rename.
+2026-03-27 23:01:49  INFO      [types]      453 rows after type coercion.
+2026-03-27 23:01:49  INFO      [nulls]      No null required-field rows found.
+2026-03-27 23:01:50  INFO      [ranges]     Dropped 4 rows outside valid physical ranges. 449 rows remain.
+2026-03-27 23:01:50  INFO      [duplicates] No duplicate rows found.
+2026-03-27 23:01:50  INFO      [outliers]   'magnitude' — 3 rows outside [-0.20, 3.00] (IQR×1.5) — flagged as is_outlier=True (not dropped).
+2026-03-27 23:01:50  INFO      [outliers]   'depth_km' — 65 rows outside [-14.53, 32.23] (IQR×1.5) — flagged as is_outlier=True (not dropped).
+2026-03-27 23:01:50  INFO      Cleaning complete. Output: 449 rows.
+2026-03-27 23:01:50  INFO      ============================================================
+2026-03-27 23:01:50  INFO      STAGE 2 — Feature Engineering
+2026-03-27 23:01:50  INFO      ============================================================
+2026-03-27 23:01:50  INFO      [features]   Time features added (year, month, dow, hour, cyclic).
+2026-03-27 23:01:50  INFO      [features]   mag_category distribution: {'micro': 376, 'minor': 71, 'light': 2}
+2026-03-27 23:01:50  INFO      [features]   depth_category distribution: {'shallow': 422, 'intermediate': 27}
+2026-03-27 23:01:50  INFO      [features]   distance_from_ref_km added (ref = Dublin, Ireland; min=6446 km, max=11455 km).
+2026-03-27 23:01:50  INFO      Feature engineering complete. Columns: ['raw_id', 'event_id', 'magnitude', 'mag_type', 'place', 'event_time', 'depth_km', 'latitude', 'longitude', 'alert', 'tsunami', 'sig', 'url', 'status', 'net', 'fetched_at', 'is_outlier', 'year', 'month', 'day_of_week', 'hour', 'is_weekend', 'hour_sin', 'hour_cos', 'month_sin', 'month_cos', 'mag_category', 'depth_category', 'distance_from_ref_km']
+2026-03-27 23:01:50  INFO      ============================================================
+2026-03-27 23:01:50  INFO      STAGE 3 — Transformations (Scaling & Encoding)
+2026-03-27 23:01:50  INFO      ============================================================
+2026-03-27 23:01:50  INFO      [transforms] Loaded existing scaler from 'scaler.pkl'.
+2026-03-27 23:01:50  INFO      [transforms] Min-Max scaling applied to: ['magnitude', 'depth_km', 'latitude', 'longitude'].
+2026-03-27 23:01:50  INFO      [transforms] mag_type one-hot encoded: ['magtype_md', 'magtype_ml', 'magtype_mlr', 'magtype_mw']
+2026-03-27 23:01:50  INFO      [transforms] Categorical encoding complete.
+2026-03-27 23:01:50  INFO      [transforms] Final column set (25 cols): ['raw_id', 'magnitude', 'latitude', 'longitude', 'depth_km', 'event_time', 'place', 'mag_type', 'status', 'year', 'month', 'day_of_week', 'hour', 'is_weekend', 'hour_sin', 'hour_cos', 'month_sin', 'month_cos', 'mag_category', 'depth_category', 'distance_from_ref_km', 'magnitude_scaled', 'depth_scaled', 'latitude_scaled', 'longitude_scaled']
+2026-03-27 23:01:50  INFO      Transformations complete. Shape: (449, 25)
+2026-03-27 23:01:50  INFO      Upserted 449 rows into 'earthquakes_processed'.
+2026-03-27 23:11:51  INFO      ╔══════════════════════════════════════════════════════════╗
+2026-03-27 23:11:51  INFO      ║     EARTHQUAKE DATA PREPROCESSING PIPELINE               ║
+2026-03-27 23:11:51  INFO      ║     Mode: FULL        Version: 1.0.0                   ║
+2026-03-27 23:11:51  INFO      ╚══════════════════════════════════════════════════════════╝
+2026-03-27 23:11:51  INFO      Table 'earthquakes_processed' is ready.
+2026-03-27 23:11:51  INFO      Loaded 453 rows from 'earthquakes'.
+2026-03-27 23:11:51  INFO      ============================================================
+2026-03-27 23:11:51  INFO      STAGE 1 — Data Cleaning & Validation
+2026-03-27 23:11:51  INFO      Input: 453 rows
+2026-03-27 23:11:51  INFO      ============================================================
+2026-03-27 23:11:51  INFO      [schema]     453 rows after column rename.
+2026-03-27 23:11:51  INFO      [types]      453 rows after type coercion.
+2026-03-27 23:11:51  INFO      [nulls]      No null required-field rows found.
+2026-03-27 23:11:51  INFO      [ranges]     Dropped 4 rows outside valid physical ranges. 449 rows remain.
+2026-03-27 23:11:51  INFO      [duplicates] No duplicate rows found.
+2026-03-27 23:11:51  INFO      [outliers]   'magnitude' — 3 rows outside [-0.20, 3.00] (IQR×1.5) — flagged as is_outlier=True (not dropped).
+2026-03-27 23:11:51  INFO      [outliers]   'depth_km' — 65 rows outside [-14.53, 32.23] (IQR×1.5) — flagged as is_outlier=True (not dropped).
+2026-03-27 23:11:51  INFO      Cleaning complete. Output: 449 rows.
+2026-03-27 23:11:51  INFO      ============================================================
+2026-03-27 23:11:51  INFO      STAGE 2 — Feature Engineering
+2026-03-27 23:11:51  INFO      ============================================================
+2026-03-27 23:11:51  INFO      [features]   Time features added (year, month, dow, hour, cyclic).
+2026-03-27 23:11:51  INFO      [features]   mag_category distribution: {'micro': 376, 'minor': 71, 'light': 2}
+2026-03-27 23:11:51  INFO      [features]   depth_category distribution: {'shallow': 422, 'intermediate': 27}
+2026-03-27 23:11:51  INFO      [features]   distance_from_ref_km added (ref = Dublin, Ireland; min=6446 km, max=11455 km).
+2026-03-27 23:11:51  INFO      Feature engineering complete. Columns: ['raw_id', 'event_id', 'magnitude', 'mag_type', 'place', 'event_time', 'depth_km', 'latitude', 'longitude', 'alert', 'tsunami', 'sig', 'url', 'status', 'net', 'fetched_at', 'is_outlier', 'year', 'month', 'day_of_week', 'hour', 'is_weekend', 'hour_sin', 'hour_cos', 'month_sin', 'month_cos', 'mag_category', 'depth_category', 'distance_from_ref_km']
+2026-03-27 23:11:51  INFO      ============================================================
+2026-03-27 23:11:51  INFO      STAGE 3 — Transformations (Scaling & Encoding)
+2026-03-27 23:11:51  INFO      ============================================================
+2026-03-27 23:11:51  INFO      [transforms] Loaded existing scaler from 'scaler.pkl'.
+2026-03-27 23:11:51  INFO      [transforms] Min-Max scaling applied to: ['magnitude', 'depth_km', 'latitude', 'longitude'].
+2026-03-27 23:11:51  INFO      [transforms] mag_type one-hot encoded: ['magtype_md', 'magtype_ml', 'magtype_mlr', 'magtype_mw']
+2026-03-27 23:11:51  INFO      [transforms] Categorical encoding complete.
+2026-03-27 23:11:51  INFO      [transforms] Final column set (25 cols): ['raw_id', 'magnitude', 'latitude', 'longitude', 'depth_km', 'event_time', 'place', 'mag_type', 'status', 'year', 'month', 'day_of_week', 'hour', 'is_weekend', 'hour_sin', 'hour_cos', 'month_sin', 'month_cos', 'mag_category', 'depth_category', 'distance_from_ref_km', 'magnitude_scaled', 'depth_scaled', 'latitude_scaled', 'longitude_scaled']
+2026-03-27 23:11:51  INFO      Transformations complete. Shape: (449, 25)
+2026-03-27 23:11:51  INFO      Upserted 449 rows into 'earthquakes_processed'.
+2026-03-27 23:11:57  INFO      ╔══════════════════════════════════════════════════════════╗
+2026-03-27 23:11:57  INFO      ║     EARTHQUAKE DATA PREPROCESSING PIPELINE               ║
+2026-03-27 23:11:57  INFO      ║     Mode: FULL        Version: 1.0.0                   ║
+2026-03-27 23:11:57  INFO      ╚══════════════════════════════════════════════════════════╝
+2026-03-27 23:11:57  INFO      Table 'earthquakes_processed' is ready.
+2026-03-27 23:11:57  INFO      Loaded 453 rows from 'earthquakes'.
+2026-03-27 23:11:57  INFO      ============================================================
+2026-03-27 23:11:57  INFO      STAGE 1 — Data Cleaning & Validation
+2026-03-27 23:11:57  INFO      Input: 453 rows
+2026-03-27 23:11:57  INFO      ============================================================
+2026-03-27 23:11:57  INFO      [schema]     453 rows after column rename.
+2026-03-27 23:11:57  INFO      [types]      453 rows after type coercion.
+2026-03-27 23:11:57  INFO      [nulls]      No null required-field rows found.
+2026-03-27 23:11:57  INFO      [ranges]     Dropped 4 rows outside valid physical ranges. 449 rows remain.
+2026-03-27 23:11:57  INFO      [duplicates] No duplicate rows found.
+2026-03-27 23:11:57  INFO      [outliers]   'magnitude' — 3 rows outside [-0.20, 3.00] (IQR×1.5) — flagged as is_outlier=True (not dropped).
+2026-03-27 23:11:57  INFO      [outliers]   'depth_km' — 65 rows outside [-14.53, 32.23] (IQR×1.5) — flagged as is_outlier=True (not dropped).
+2026-03-27 23:11:57  INFO      Cleaning complete. Output: 449 rows.
+2026-03-27 23:11:57  INFO      ============================================================
+2026-03-27 23:11:57  INFO      STAGE 2 — Feature Engineering
+2026-03-27 23:11:57  INFO      ============================================================
+2026-03-27 23:11:57  INFO      [features]   Time features added (year, month, dow, hour, cyclic).
+2026-03-27 23:11:57  INFO      [features]   mag_category distribution: {'micro': 376, 'minor': 71, 'light': 2}
+2026-03-27 23:11:57  INFO      [features]   depth_category distribution: {'shallow': 422, 'intermediate': 27}
+2026-03-27 23:11:57  INFO      [features]   distance_from_ref_km added (ref = Dublin, Ireland; min=6446 km, max=11455 km).
+2026-03-27 23:11:57  INFO      Feature engineering complete. Columns: ['raw_id', 'event_id', 'magnitude', 'mag_type', 'place', 'event_time', 'depth_km', 'latitude', 'longitude', 'alert', 'tsunami', 'sig', 'url', 'status', 'net', 'fetched_at', 'is_outlier', 'year', 'month', 'day_of_week', 'hour', 'is_weekend', 'hour_sin', 'hour_cos', 'month_sin', 'month_cos', 'mag_category', 'depth_category', 'distance_from_ref_km']
+2026-03-27 23:11:57  INFO      ============================================================
+2026-03-27 23:11:57  INFO      STAGE 3 — Transformations (Scaling & Encoding)
+2026-03-27 23:11:57  INFO      ============================================================
+2026-03-27 23:11:57  INFO      [transforms] Loaded existing scaler from 'scaler.pkl'.
+2026-03-27 23:11:57  INFO      [transforms] Min-Max scaling applied to: ['magnitude', 'depth_km', 'latitude', 'longitude'].
+2026-03-27 23:11:57  INFO      [transforms] mag_type one-hot encoded: ['magtype_md', 'magtype_ml', 'magtype_mlr', 'magtype_mw']
+2026-03-27 23:11:57  INFO      [transforms] Categorical encoding complete.
+2026-03-27 23:11:57  INFO      [transforms] Final column set (25 cols): ['raw_id', 'magnitude', 'latitude', 'longitude', 'depth_km', 'event_time', 'place', 'mag_type', 'status', 'year', 'month', 'day_of_week', 'hour', 'is_weekend', 'hour_sin', 'hour_cos', 'month_sin', 'month_cos', 'mag_category', 'depth_category', 'distance_from_ref_km', 'magnitude_scaled', 'depth_scaled', 'latitude_scaled', 'longitude_scaled']
+2026-03-27 23:11:57  INFO      Transformations complete. Shape: (449, 25)
+2026-03-27 23:11:57  INFO      Upserted 449 rows into 'earthquakes_processed'.
+2026-03-27 23:17:17  INFO      ╔══════════════════════════════════════════════════════════╗
+2026-03-27 23:17:17  INFO      ║     EARTHQUAKE DATA PREPROCESSING PIPELINE               ║
+2026-03-27 23:17:17  INFO      ║     Mode: FULL        Version: 1.0.0                   ║
+2026-03-27 23:17:17  INFO      ╚══════════════════════════════════════════════════════════╝
+2026-03-27 23:17:17  INFO      Table 'earthquakes_processed' is ready.
+2026-03-27 23:17:17  INFO      Loaded 453 rows from 'earthquakes'.
+2026-03-27 23:17:17  INFO      ============================================================
+2026-03-27 23:17:17  INFO      STAGE 1 — Data Cleaning & Validation
+2026-03-27 23:17:17  INFO      Input: 453 rows
+2026-03-27 23:17:17  INFO      ============================================================
+2026-03-27 23:17:17  INFO      [schema]     453 rows after column rename.
+2026-03-27 23:17:17  INFO      [types]      453 rows after type coercion.
+2026-03-27 23:17:17  INFO      [nulls]      No null required-field rows found.
+2026-03-27 23:17:17  INFO      [ranges]     Dropped 4 rows outside valid physical ranges. 449 rows remain.
+2026-03-27 23:17:17  INFO      [duplicates] No duplicate rows found.
+2026-03-27 23:17:17  INFO      [outliers]   'magnitude' — 3 rows outside [-0.20, 3.00] (IQR×1.5) — flagged as is_outlier=True (not dropped).
+2026-03-27 23:17:17  INFO      [outliers]   'depth_km' — 65 rows outside [-14.53, 32.23] (IQR×1.5) — flagged as is_outlier=True (not dropped).
+2026-03-27 23:17:17  INFO      Cleaning complete. Output: 449 rows.
+2026-03-27 23:17:17  INFO      ============================================================
+2026-03-27 23:17:17  INFO      STAGE 2 — Feature Engineering
+2026-03-27 23:17:17  INFO      ============================================================
+2026-03-27 23:17:17  INFO      [features]   Time features added (year, month, dow, hour, cyclic).
+2026-03-27 23:17:17  INFO      [features]   mag_category distribution: {'micro': 376, 'minor': 71, 'light': 2}
+2026-03-27 23:17:17  INFO      [features]   depth_category distribution: {'shallow': 422, 'intermediate': 27}
+2026-03-27 23:17:17  INFO      [features]   distance_from_ref_km added (ref = Dublin, Ireland; min=6446 km, max=11455 km).
+2026-03-27 23:17:17  INFO      Feature engineering complete. Columns: ['raw_id', 'event_id', 'magnitude', 'mag_type', 'place', 'event_time', 'depth_km', 'latitude', 'longitude', 'alert', 'tsunami', 'sig', 'url', 'status', 'net', 'fetched_at', 'is_outlier', 'year', 'month', 'day_of_week', 'hour', 'is_weekend', 'hour_sin', 'hour_cos', 'month_sin', 'month_cos', 'mag_category', 'depth_category', 'distance_from_ref_km']
+2026-03-27 23:17:17  INFO      ============================================================
+2026-03-27 23:17:17  INFO      STAGE 3 — Transformations (Scaling & Encoding)
+2026-03-27 23:17:17  INFO      ============================================================
+2026-03-27 23:17:17  INFO      [transforms] Loaded existing scaler from 'scaler.pkl'.
+2026-03-27 23:17:17  INFO      [transforms] Min-Max scaling applied to: ['magnitude', 'depth_km', 'latitude', 'longitude'].
+2026-03-27 23:17:17  INFO      [transforms] mag_type one-hot encoded: ['magtype_md', 'magtype_ml', 'magtype_mlr', 'magtype_mw']
+2026-03-27 23:17:17  INFO      [transforms] Categorical encoding complete.
+2026-03-27 23:17:17  INFO      [transforms] Final column set (25 cols): ['raw_id', 'magnitude', 'latitude', 'longitude', 'depth_km', 'event_time', 'place', 'mag_type', 'status', 'year', 'month', 'day_of_week', 'hour', 'is_weekend', 'hour_sin', 'hour_cos', 'month_sin', 'month_cos', 'mag_category', 'depth_category', 'distance_from_ref_km', 'magnitude_scaled', 'depth_scaled', 'latitude_scaled', 'longitude_scaled']
+2026-03-27 23:17:17  INFO      Transformations complete. Shape: (449, 25)
+2026-03-27 23:17:17  INFO      Upserted 449 rows into 'earthquakes_processed'.
+2026-03-27 23:23:23  INFO      ╔══════════════════════════════════════════════════════════╗
+2026-03-27 23:23:23  INFO      ║     EARTHQUAKE DATA PREPROCESSING PIPELINE               ║
+2026-03-27 23:23:23  INFO      ║     Mode: FULL        Version: 1.0.0                   ║
+2026-03-27 23:23:23  INFO      ╚══════════════════════════════════════════════════════════╝
+2026-03-27 23:23:23  INFO      Table 'earthquakes_processed' is ready.
+2026-03-27 23:23:23  INFO      Loaded 454 rows from 'earthquakes'.
+2026-03-27 23:23:23  INFO      ============================================================
+2026-03-27 23:23:23  INFO      STAGE 1 — Data Cleaning & Validation
+2026-03-27 23:23:23  INFO      Input: 454 rows
+2026-03-27 23:23:23  INFO      ============================================================
+2026-03-27 23:23:23  INFO      [schema]     454 rows after column rename.
+2026-03-27 23:23:23  INFO      [types]      454 rows after type coercion.
+2026-03-27 23:23:23  INFO      [nulls]      No null required-field rows found.
+2026-03-27 23:23:23  INFO      [ranges]     Dropped 4 rows outside valid physical ranges. 450 rows remain.
+2026-03-27 23:23:23  INFO      [duplicates] No duplicate rows found.
+2026-03-27 23:23:23  INFO      [outliers]   'magnitude' — 3 rows outside [-0.20, 3.00] (IQR×1.5) — flagged as is_outlier=True (not dropped).
+2026-03-27 23:23:23  INFO      [outliers]   'depth_km' — 66 rows outside [-14.57, 32.32] (IQR×1.5) — flagged as is_outlier=True (not dropped).
+2026-03-27 23:23:23  INFO      Cleaning complete. Output: 450 rows.
+2026-03-27 23:23:23  INFO      ============================================================
+2026-03-27 23:23:23  INFO      STAGE 2 — Feature Engineering
+2026-03-27 23:23:23  INFO      ============================================================
+2026-03-27 23:23:23  INFO      [features]   Time features added (year, month, dow, hour, cyclic).
+2026-03-27 23:23:23  INFO      [features]   mag_category distribution: {'micro': 377, 'minor': 71, 'light': 2}
+2026-03-27 23:23:23  INFO      [features]   depth_category distribution: {'shallow': 423, 'intermediate': 27}
+2026-03-27 23:23:23  INFO      [features]   distance_from_ref_km added (ref = Dublin, Ireland; min=6446 km, max=11455 km).
+2026-03-27 23:23:23  INFO      Feature engineering complete. Columns: ['raw_id', 'event_id', 'magnitude', 'mag_type', 'place', 'event_time', 'depth_km', 'latitude', 'longitude', 'alert', 'tsunami', 'sig', 'url', 'status', 'net', 'fetched_at', 'is_outlier', 'year', 'month', 'day_of_week', 'hour', 'is_weekend', 'hour_sin', 'hour_cos', 'month_sin', 'month_cos', 'mag_category', 'depth_category', 'distance_from_ref_km']
+2026-03-27 23:23:23  INFO      ============================================================
+2026-03-27 23:23:23  INFO      STAGE 3 — Transformations (Scaling & Encoding)
+2026-03-27 23:23:23  INFO      ============================================================
+2026-03-27 23:23:23  INFO      [transforms] Loaded existing scaler from 'scaler.pkl'.
+2026-03-27 23:23:23  INFO      [transforms] Min-Max scaling applied to: ['magnitude', 'depth_km', 'latitude', 'longitude'].
+2026-03-27 23:23:23  INFO      [transforms] mag_type one-hot encoded: ['magtype_md', 'magtype_ml', 'magtype_mlr', 'magtype_mw']
+2026-03-27 23:23:23  INFO      [transforms] Categorical encoding complete.
+2026-03-27 23:23:23  INFO      [transforms] Final column set (25 cols): ['raw_id', 'magnitude', 'latitude', 'longitude', 'depth_km', 'event_time', 'place', 'mag_type', 'status', 'year', 'month', 'day_of_week', 'hour', 'is_weekend', 'hour_sin', 'hour_cos', 'month_sin', 'month_cos', 'mag_category', 'depth_category', 'distance_from_ref_km', 'magnitude_scaled', 'depth_scaled', 'latitude_scaled', 'longitude_scaled']
+2026-03-27 23:23:23  INFO      Transformations complete. Shape: (450, 25)
+2026-03-27 23:23:23  INFO      Upserted 450 rows into 'earthquakes_processed'.

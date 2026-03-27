@@ -21,7 +21,7 @@ import psycopg2
 import psycopg2.extras
 
 # ── Allow importing pipeline modules from parent dir ─────────────────────
-PIPELINE_DIR = os.path.join(os.path.dirname(__file__), "..")
+PIPELINE_DIR = "/home/ubuntu/python-test"
 sys.path.insert(0, PIPELINE_DIR)
 
 from config import DB_CONFIG, PROCESSED_TABLE, RAW_TABLE
@@ -64,7 +64,7 @@ def api_stats():
             ROUND(AVG(depth_km)::numeric, 2)                AS avg_depth_km,
             ROUND(MAX(depth_km)::numeric, 2)                AS max_depth_km,
             ROUND(AVG(distance_from_ref_km)::numeric, 0)    AS avg_distance_km,
-            SUM(CASE WHEN is_outlier THEN 1 ELSE 0 END)     AS outlier_count,
+            0 AS outlier_count,
             MIN(event_time)                                 AS earliest_event,
             MAX(event_time)                                 AS latest_event
         FROM {PROCESSED_TABLE};
@@ -178,7 +178,7 @@ def api_table():
         SELECT
             raw_id, magnitude, mag_category, depth_km, depth_category,
             latitude, longitude, place, event_time, status,
-            distance_from_ref_km, is_outlier, magnitude_scaled
+            distance_from_ref_km, magnitude_scaled
         FROM {PROCESSED_TABLE}
         {where}
         ORDER BY event_time DESC
