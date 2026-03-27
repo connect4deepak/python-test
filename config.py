@@ -6,8 +6,8 @@ DB_CONFIG = {
     "host":     "localhost",
     "port":     5432,
     "dbname":   "earthquake",
-    "user":     "postgres",
-    "password": "your_password_here",   # ← update this
+    "user":     "root",
+    "password": "root",   # ← update this
 }
 
 # Raw table written by your cron job

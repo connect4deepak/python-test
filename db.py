@@ -3,9 +3,11 @@
 # =============================================================================
 
 import logging
+import numpy as np
 import pandas as pd
 import psycopg2
 from psycopg2.extras import execute_values
+from sqlalchemy import create_engine
 from config import DB_CONFIG, RAW_TABLE, PROCESSED_TABLE
 
 logger = logging.getLogger(__name__)
@@ -16,29 +18,28 @@ def get_connection():
     return psycopg2.connect(**DB_CONFIG)
 
 
+def get_engine():
+    """SQLAlchemy engine — used by pd.read_sql to suppress DBAPI2 warning."""
+    c = DB_CONFIG
+    url = (f"postgresql+psycopg2://{c['user']}:{c['password']}"
+           f"@{c['host']}:{c['port']}/{c['dbname']}")
+    return create_engine(url)
+
+
 # ── READ ──────────────────────────────────────────────────────────────────
 
 def load_raw_earthquakes() -> pd.DataFrame:
-    """
-    Load the full raw earthquake table into a DataFrame.
-    Assumes columns: id, magnitude, latitude, longitude, depth,
-                     time, place, magtype, type, status, ...
-    """
+    """Load the full raw earthquake table into a DataFrame."""
     query = f"SELECT * FROM {RAW_TABLE};"
-    with get_connection() as conn:
-        df = pd.read_sql(query, conn)
+    df = pd.read_sql(query, get_engine())
     logger.info(f"Loaded {len(df):,} rows from '{RAW_TABLE}'.")
     return df
 
 
 def load_new_earthquakes(since_id: int = 0) -> pd.DataFrame:
-    """
-    Incremental load — fetch only rows with id > since_id.
-    Useful when the pipeline runs on a schedule alongside the cron job.
-    """
-    query = f"SELECT * FROM {RAW_TABLE} WHERE id > %s ORDER BY id;"
-    with get_connection() as conn:
-        df = pd.read_sql(query, conn, params=(since_id,))
+    """Incremental load — fetch only rows with id > since_id."""
+    query = f"SELECT * FROM {RAW_TABLE} WHERE id > %(sid)s ORDER BY id;"
+    df = pd.read_sql(query, get_engine(), params={"sid": since_id})
     logger.info(f"Loaded {len(df):,} new rows (id > {since_id}).")
     return df
 
@@ -54,6 +55,22 @@ def get_last_processed_id() -> int:
 
 # ── WRITE ─────────────────────────────────────────────────────────────────
 
+def _to_native(val):
+    """
+    Convert numpy scalar types to native Python equivalents.
+    psycopg2 cannot adapt numpy.int16, numpy.float32, etc.
+    """
+    if isinstance(val, np.integer):
+        return int(val)
+    if isinstance(val, np.floating):
+        return None if np.isnan(val) else float(val)
+    if isinstance(val, np.bool_):
+        return bool(val)
+    if isinstance(val, float) and np.isnan(val):
+        return None
+    return val
+
+
 def save_processed(df: pd.DataFrame) -> None:
     """
     Upsert the processed DataFrame into earthquakes_processed.
@@ -62,6 +79,11 @@ def save_processed(df: pd.DataFrame) -> None:
     if df.empty:
         logger.warning("save_processed called with empty DataFrame — skipping.")
         return
+
+    # Convert all numpy scalar types → native Python (psycopg2 requirement)
+    df = df.copy()
+    for col in df.columns:
+        df[col] = df[col].apply(_to_native)
 
     cols = list(df.columns)
     rows = [tuple(r) for r in df.itertuples(index=False)]
@@ -87,49 +109,44 @@ def save_processed(df: pd.DataFrame) -> None:
 def create_processed_table() -> None:
     """
     Create the earthquakes_processed table if it does not exist.
-    Run this once at setup (or call from pipeline.py on first run).
     """
     ddl = f"""
     CREATE TABLE IF NOT EXISTS {PROCESSED_TABLE} (
-        raw_id              BIGINT PRIMARY KEY,
-
-        -- Cleaned core fields
-        magnitude           NUMERIC(5,2),
-        latitude            NUMERIC(9,5),
-        longitude           NUMERIC(9,5),
-        depth_km            NUMERIC(8,3),
-        event_time          TIMESTAMP WITH TIME ZONE,
-        place               TEXT,
-        mag_type            TEXT,
-        event_type          TEXT,
-        status              TEXT,
-
-        -- Time features
-        year                SMALLINT,
-        month               SMALLINT,
-        day_of_week         SMALLINT,   -- 0=Mon … 6=Sun
-        hour                SMALLINT,
-        is_weekend          BOOLEAN,
-        hour_sin            NUMERIC(10,8),
-        hour_cos            NUMERIC(10,8),
-        month_sin           NUMERIC(10,8),
-        month_cos           NUMERIC(10,8),
-
-        -- Engineered features
-        mag_category        TEXT,       -- micro/minor/light/moderate/strong/major/great
-        depth_category      TEXT,       -- shallow/intermediate/deep
-        distance_from_ref_km NUMERIC(10,3),
-
-        -- Scaled / encoded numerics
-        magnitude_scaled    NUMERIC(10,6),
-        depth_scaled        NUMERIC(10,6),
-        latitude_scaled     NUMERIC(10,6),
-        longitude_scaled    NUMERIC(10,6),
-
-        -- Pipeline metadata
-        processed_at        TIMESTAMP DEFAULT NOW(),
-        pipeline_version    TEXT
+        raw_id                  BIGINT          PRIMARY KEY,
+        magnitude               NUMERIC(5,2),
+        latitude                NUMERIC(9,5),
+        longitude               NUMERIC(9,5),
+        depth_km                NUMERIC(8,3),
+        event_time              TIMESTAMPTZ,
+        place                   TEXT,
+        mag_type                TEXT,
+        event_type              TEXT,
+        status                  TEXT,
+        year                    SMALLINT,
+        month                   SMALLINT,
+        day_of_week             SMALLINT,
+        hour                    SMALLINT,
+        is_weekend              BOOLEAN,
+        hour_sin                NUMERIC(10,8),
+        hour_cos                NUMERIC(10,8),
+        month_sin               NUMERIC(10,8),
+        month_cos               NUMERIC(10,8),
+        mag_category            TEXT,
+        depth_category          TEXT,
+        distance_from_ref_km    NUMERIC(10,3),
+        is_outlier              BOOLEAN         DEFAULT FALSE,
+        magnitude_scaled        NUMERIC(10,6),
+        depth_scaled            NUMERIC(10,6),
+        latitude_scaled         NUMERIC(10,6),
+        longitude_scaled        NUMERIC(10,6),
+        pipeline_version        TEXT,
+        processed_at            TIMESTAMPTZ     DEFAULT NOW()
     );
+    CREATE INDEX IF NOT EXISTS idx_ep_event_time     ON {PROCESSED_TABLE} (event_time);
+    CREATE INDEX IF NOT EXISTS idx_ep_magnitude      ON {PROCESSED_TABLE} (magnitude);
+    CREATE INDEX IF NOT EXISTS idx_ep_mag_category   ON {PROCESSED_TABLE} (mag_category);
+    CREATE INDEX IF NOT EXISTS idx_ep_depth_category ON {PROCESSED_TABLE} (depth_category);
+    CREATE INDEX IF NOT EXISTS idx_ep_location       ON {PROCESSED_TABLE} (latitude, longitude);
     """
     with get_connection() as conn:
         with conn.cursor() as cur:
