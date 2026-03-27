@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Earthquake Pipeline Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+  :root {
+    --bg:        #070b14;
+    --surface:   #0d1526;
+    --border:    #1a2a4a;
+    --accent:    #f97316;
+    --accent2:   #ef4444;
+    --accent3:   #22d3ee;
+    --text:      #e2e8f0;
+    --muted:     #64748b;
+    --green:     #4ade80;
+    --yellow:    #fbbf24;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+  }
+
+  /* ── grid noise overlay ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(249,115,22,.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(249,115,22,.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .wrapper { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 24px; }
+
+  /* ── Header ── */
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 28px; margin-bottom: 28px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+  }
+
+  .logo {
+    display: flex; align-items: center; gap: 14px;
+  }
+  .logo-icon {
+    width: 42px; height: 42px; position: relative;
+  }
+  .logo-icon svg { width: 100%; height: 100%; }
+  .logo-text h1 {
+    font-size: 1.3rem; font-weight: 800; letter-spacing: -.02em;
+    color: var(--text);
+  }
+  .logo-text span {
+    font-family: 'Space Mono', monospace;
+    font-size: .7rem; color: var(--accent); letter-spacing: .1em;
+  }
+
+  .header-right { display: flex; gap: 10px; align-items: center; }
+
+  .btn {
+    font-family: 'Space Mono', monospace;
+    font-size: .72rem; font-weight: 700;
+    padding: 8px 16px; cursor: pointer;
+    border: 1px solid; letter-spacing: .05em;
+    transition: all .2s;
+  }
+  .btn-primary {
+    background: var(--accent); color: #000;
+    border-color: var(--accent);
+  }
+  .btn-primary:hover { background: #ea6a00; }
+  .btn-ghost {
+    background: transparent; color: var(--accent3);
+    border-color: var(--accent3);
+  }
+  .btn-ghost:hover { background: rgba(34,211,238,.1); }
+
+  .status-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--green); box-shadow: 0 0 8px var(--green);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+  /* ── KPI cards ── */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 12px; margin-bottom: 24px;
+  }
+
+  .kpi {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 20px 18px;
+    position: relative; overflow: hidden;
+    transition: border-color .2s;
+  }
+  .kpi:hover { border-color: var(--accent); }
+  .kpi::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0;
+    width: 100%; height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+  }
+  .kpi-label {
+    font-family: 'Space Mono', monospace;
+    font-size: .62rem; letter-spacing: .08em;
+    color: var(--muted); margin-bottom: 10px; text-transform: uppercase;
+  }
+  .kpi-value {
+    font-size: 2rem; font-weight: 800; line-height: 1;
+    color: var(--text);
+  }
+  .kpi-sub {
+    font-family: 'Space Mono', monospace;
+    font-size: .65rem; color: var(--muted); margin-top: 6px;
+  }
+  .kpi-accent { color: var(--accent); }
+
+  /* ── Section layout ── */
+  .section-title {
+    font-family: 'Space Mono', monospace;
+    font-size: .7rem; letter-spacing: .12em; color: var(--accent);
+    text-transform: uppercase; margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-title::before {
+    content: ''; display: block; width: 20px; height: 1px; background: var(--accent);
+  }
+
+  .charts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px; margin-bottom: 24px;
+  }
+
+  .chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 22px;
+  }
+  .chart-card h3 {
+    font-family: 'Space Mono', monospace;
+    font-size: .72rem; letter-spacing: .06em;
+    color: var(--muted); text-transform: uppercase; margin-bottom: 16px;
+  }
+  .chart-wrap { position: relative; height: 220px; }
+
+  .chart-card.wide { grid-column: span 2; }
+
+  /* ── Map ── */
+  .map-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    margin-bottom: 24px;
+    padding: 22px;
+  }
+  .map-card h3 {
+    font-family: 'Space Mono', monospace;
+    font-size: .72rem; letter-spacing: .06em;
+    color: var(--muted); text-transform: uppercase; margin-bottom: 14px;
+  }
+  #map { height: 420px; width: 100%; }
+
+  /* ── Table ── */
+  .table-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 22px;
+    margin-bottom: 24px;
+  }
+  .table-controls {
+    display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; align-items: center;
+  }
+  .filter-select {
+    font-family: 'Space Mono', monospace; font-size: .72rem;
+    background: var(--bg); border: 1px solid var(--border);
+    color: var(--text); padding: 7px 12px; cursor: pointer;
+  }
+  .filter-select:focus { outline: none; border-color: var(--accent); }
+
+  .tbl-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: .82rem; }
+  th {
+    font-family: 'Space Mono', monospace;
+    font-size: .62rem; letter-spacing: .08em; color: var(--muted);
+    text-transform: uppercase; text-align: left;
+    padding: 10px 12px; border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 10px 12px; border-bottom: 1px solid rgba(26,42,74,.5);
+    color: var(--text);
+  }
+  tr:hover td { background: rgba(249,115,22,.04); }
+
+  .badge {
+    font-family: 'Space Mono', monospace;
+    font-size: .6rem; padding: 3px 8px; letter-spacing: .04em;
+  }
+  .badge-micro    { background: rgba(100,116,139,.2); color: #94a3b8; }
+  .badge-minor    { background: rgba(34,211,238,.15); color: var(--accent3); }
+  .badge-light    { background: rgba(74,222,128,.15); color: var(--green); }
+  .badge-moderate { background: rgba(251,191,36,.15); color: var(--yellow); }
+  .badge-strong   { background: rgba(249,115,22,.2);  color: var(--accent); }
+  .badge-major    { background: rgba(239,68,68,.2);   color: var(--accent2); }
+  .badge-great    { background: rgba(239,68,68,.4);   color: #fca5a5; }
+
+  .badge-shallow      { background: rgba(74,222,128,.12);  color: var(--green); }
+  .badge-intermediate { background: rgba(251,191,36,.12);  color: var(--yellow); }
+  .badge-deep         { background: rgba(239,68,68,.15);   color: var(--accent2); }
+
+  .outlier-flag {
+    font-family: 'Space Mono', monospace;
+    font-size: .58rem; color: var(--accent2);
+    border: 1px solid var(--accent2); padding: 2px 6px;
+  }
+
+  .pagination {
+    display: flex; gap: 8px; align-items: center;
+    margin-top: 16px; justify-content: flex-end;
+    font-family: 'Space Mono', monospace; font-size: .72rem;
+  }
+  .page-info { color: var(--muted); }
+
+  /* ── Pipeline runner ── */
+  .runner-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 22px; margin-bottom: 24px;
+    display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap;
+  }
+  .runner-log {
+    flex: 1; min-width: 300px;
+    background: var(--bg); border: 1px solid var(--border);
+    font-family: 'Space Mono', monospace; font-size: .68rem;
+    color: var(--accent3); padding: 14px;
+    height: 140px; overflow-y: auto; white-space: pre-wrap; word-break: break-all;
+  }
+  .runner-controls { display: flex; flex-direction: column; gap: 8px; }
+
+  /* ── Toast ── */
+  #toast {
+    position: fixed; bottom: 28px; right: 28px; z-index: 9999;
+    background: var(--surface); border: 1px solid var(--accent);
+    font-family: 'Space Mono', monospace; font-size: .72rem;
+    color: var(--accent); padding: 12px 20px;
+    transform: translateY(80px); opacity: 0;
+    transition: all .3s;
+  }
+  #toast.show { transform: translateY(0); opacity: 1; }
+
+  /* ── Loader ── */
+  .spinner {
+    width: 16px; height: 16px; border: 2px solid var(--border);
+    border-top-color: var(--accent); border-radius: 50%;
+    animation: spin .7s linear infinite; display: inline-block;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .charts-grid { grid-template-columns: 1fr; }
+    .chart-card.wide { grid-column: span 1; }
+    header { flex-direction: column; gap: 14px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- Header -->
+  <header>
+    <div class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="21" cy="21" r="20" stroke="#f97316" stroke-width="1.5" stroke-dasharray="4 2"/>
+          <path d="M6 21 L12 14 L18 26 L24 10 L30 22 L36 21" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="21" cy="21" r="3" fill="#f97316"/>
+        </svg>
+      </div>
+      <div class="logo-text">
+        <h1>Seismic Pipeline</h1>
+        <span>USGS · Data Acquisition &amp; Preprocessing</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="status-dot" id="statusDot"></div>
+      <span style="font-family:'Space Mono',monospace;font-size:.68rem;color:var(--muted)">LIVE</span>
+      <button class="btn btn-ghost" onclick="refreshAll()">↺ REFRESH</button>
+    </div>
+  </header>
+
+  <!-- KPI strip -->
+  <div class="section-title">Pipeline Statistics</div>
+  <div class="kpi-grid" id="kpiGrid">
+    <div class="kpi"><div class="kpi-label">Processed Events</div><div class="kpi-value" id="kpi-processed"><span class="spinner"></span></div></div>
+    <div class="kpi"><div class="kpi-label">Raw Events</div><div class="kpi-value" id="kpi-raw"><span class="spinner"></span></div></div>
+    <div class="kpi"><div class="kpi-label">Avg Magnitude</div><div class="kpi-value kpi-accent" id="kpi-avgmag">—</div></div>
+    <div class="kpi"><div class="kpi-label">Max Magnitude</div><div class="kpi-value" id="kpi-maxmag">—</div></div>
+    <div class="kpi"><div class="kpi-label">Avg Depth (km)</div><div class="kpi-value" id="kpi-depth">—</div></div>
+    <div class="kpi"><div class="kpi-label">Outliers Flagged</div><div class="kpi-value" id="kpi-outliers">—</div></div>
+    <div class="kpi"><div class="kpi-label">Avg Dist. to Dublin</div><div class="kpi-value" id="kpi-dist">—</div><div class="kpi-sub">km great-circle</div></div>
+  </div>
+
+  <!-- Charts -->
+  <div class="section-title">Distributions &amp; Patterns</div>
+  <div class="charts-grid">
+    <div class="chart-card">
+      <h3>Magnitude Category</h3>
+      <div class="chart-wrap"><canvas id="chartMagCat"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Depth Category</h3>
+      <div class="chart-wrap"><canvas id="chartDepthCat"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Hourly Activity (UTC)</h3>
+      <div class="chart-wrap"><canvas id="chartHourly"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Magnitude Distribution</h3>
+      <div class="chart-wrap"><canvas id="chartMagHist"></canvas></div>
+    </div>
+    <div class="chart-card wide">
+      <h3>Events Over Time</h3>
+      <div class="chart-wrap"><canvas id="chartTimeline"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Map -->
+  <div class="section-title">Epicentre Map (latest 1000)</div>
+  <div class="map-card">
+    <h3>Geographic Distribution</h3>
+    <div id="map"></div>
+  </div>
+
+  <!-- Data table -->
+  <div class="section-title">Processed Data Table</div>
+  <div class="table-card">
+    <div class="table-controls">
+      <select class="filter-select" id="filterMag" onchange="loadTable(1)">
+        <option value="">All Magnitudes</option>
+        <option value="micro">Micro</option>
+        <option value="minor">Minor</option>
+        <option value="light">Light</option>
+        <option value="moderate">Moderate</option>
+        <option value="strong">Strong</option>
+        <option value="major">Major</option>
+        <option value="great">Great</option>
+      </select>
+      <select class="filter-select" id="filterDepth" onchange="loadTable(1)">
+        <option value="">All Depths</option>
+        <option value="shallow">Shallow</option>
+        <option value="intermediate">Intermediate</option>
+        <option value="deep">Deep</option>
+      </select>
+      <span style="margin-left:auto;font-family:'Space Mono',monospace;font-size:.68rem;color:var(--muted)" id="tableTotal"></span>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th><th>Time (UTC)</th><th>Place</th>
+            <th>Mag</th><th>Category</th><th>Depth km</th><th>Depth Cat</th>
+            <th>Dist. Dublin</th><th>Scaled Mag</th><th>Outlier</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+    <div class="pagination">
+      <button class="btn btn-ghost" id="btnPrev" onclick="changePage(-1)">← PREV</button>
+      <span class="page-info" id="pageInfo"></span>
+      <button class="btn btn-ghost" id="btnNext" onclick="changePage(1)">NEXT →</button>
+    </div>
+  </div>
+
+  <!-- Pipeline runner -->
+  <div class="section-title">Pipeline Control</div>
+  <div class="runner-card">
+    <div class="runner-controls">
+      <button class="btn btn-primary" onclick="runPipeline('incremental')">▶ RUN INCREMENTAL</button>
+      <button class="btn btn-ghost"   onclick="runPipeline('full')">▶ RUN FULL</button>
+    </div>
+    <div class="runner-log" id="runnerLog">// Pipeline output will appear here...</div>
+  </div>
+
+</div><!-- /wrapper -->
+
+<div id="toast"></div>
+
+<script>
+// ── Chart.js global defaults ─────────────────────────────────────────────
+Chart.defaults.color = '#64748b';
+Chart.defaults.borderColor = '#1a2a4a';
+Chart.defaults.font.family = "'Space Mono', monospace";
+Chart.defaults.font.size = 10;
+
+const ACCENT  = '#f97316';
+const ACCENT2 = '#ef4444';
+const ACCENT3 = '#22d3ee';
+const GREEN   = '#4ade80';
+const YELLOW  = '#fbbf24';
+const MUTED   = '#334155';
+
+const MAG_COLORS = {
+  micro:'#475569', minor:ACCENT3, light:GREEN,
+  moderate:YELLOW, strong:ACCENT, major:ACCENT2, great:'#fca5a5'
+};
+
+// ── Helpers ───────────────────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+
+function toast(msg) {
+  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function fmt(val, digits=1) {
+  if (val === null || val === undefined) return '—';
+  return Number(val).toLocaleString(undefined, {maximumFractionDigits: digits});
+}
+
+// ── State ─────────────────────────────────────────────────────────────────
+let currentPage = 1;
+const charts = {};
+
+// ── Stats ─────────────────────────────────────────────────────────────────
+async function loadStats() {
+  const s = await fetch('/api/stats').then(r => r.json());
+  $('kpi-processed').textContent = fmt(s.total_processed, 0);
+  $('kpi-raw').textContent       = fmt(s.raw_count, 0);
+  $('kpi-avgmag').textContent    = fmt(s.avg_magnitude, 2);
+  $('kpi-maxmag').textContent    = fmt(s.max_magnitude, 2);
+  $('kpi-depth').textContent     = fmt(s.avg_depth_km, 1);
+  $('kpi-outliers').textContent  = fmt(s.outlier_count, 0);
+  $('kpi-dist').textContent      = fmt(s.avg_distance_km, 0) + ' km';
+}
+
+// ── Charts ────────────────────────────────────────────────────────────────
+function makeChart(id, config) {
+  if (charts[id]) charts[id].destroy();
+  charts[id] = new Chart($(id).getContext('2d'), config);
+}
+
+async function loadCharts() {
+  const d = await fetch('/api/charts').then(r => r.json());
+
+  // 1. Mag category — horizontal bar
+  makeChart('chartMagCat', {
+    type: 'bar',
+    data: {
+      labels: d.mag_categories.map(r => r.mag_category),
+      datasets: [{
+        data: d.mag_categories.map(r => r.count),
+        backgroundColor: d.mag_categories.map(r => MAG_COLORS[r.mag_category] || MUTED),
+        borderWidth: 0,
+      }]
+    },
+    options: {
+      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: '#1a2a4a' } },
+        y: { grid: { display: false } }
+      }
+    }
+  });
+
+  // 2. Depth category — doughnut
+  makeChart('chartDepthCat', {
+    type: 'doughnut',
+    data: {
+      labels: d.depth_categories.map(r => r.depth_category),
+      datasets: [{
+        data: d.depth_categories.map(r => r.count),
+        backgroundColor: [GREEN, YELLOW, ACCENT2],
+        borderColor: '#0d1526', borderWidth: 2,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      cutout: '65%',
+      plugins: { legend: { position: 'right', labels: { boxWidth: 10, padding: 12 } } }
+    }
+  });
+
+  // 3. Hourly activity — line
+  const hours = Array.from({length:24}, (_,i) => i);
+  const hourMap = Object.fromEntries(d.hourly.map(r => [r.hour, r.count]));
+  makeChart('chartHourly', {
+    type: 'line',
+    data: {
+      labels: hours.map(h => String(h).padStart(2,'0') + ':00'),
+      datasets: [{
+        data: hours.map(h => hourMap[h] || 0),
+        borderColor: ACCENT3, backgroundColor: 'rgba(34,211,238,.08)',
+        tension: 0.4, fill: true, pointRadius: 3, pointBackgroundColor: ACCENT3,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: '#1a2a4a' }, ticks: { maxTicksLimit: 12 } },
+        y: { grid: { color: '#1a2a4a' }, beginAtZero: true }
+      }
+    }
+  });
+
+  // 4. Magnitude histogram — bar
+  makeChart('chartMagHist', {
+    type: 'bar',
+    data: {
+      labels: d.mag_histogram.map(r => r.bin),
+      datasets: [{
+        data: d.mag_histogram.map(r => r.count),
+        backgroundColor: 'rgba(249,115,22,.5)',
+        borderColor: ACCENT, borderWidth: 1,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false } },
+        y: { grid: { color: '#1a2a4a' }, beginAtZero: true }
+      }
+    }
+  });
+
+  // 5. Timeline — line
+  makeChart('chartTimeline', {
+    type: 'line',
+    data: {
+      labels: d.timeline.map(r => r.day),
+      datasets: [
+        {
+          label: 'Events',
+          data: d.timeline.map(r => r.count),
+          borderColor: ACCENT, backgroundColor: 'rgba(249,115,22,.08)',
+          tension: 0.3, fill: true, yAxisID: 'y',
+        },
+        {
+          label: 'Avg Mag',
+          data: d.timeline.map(r => r.avg_mag),
+          borderColor: ACCENT3, backgroundColor: 'transparent',
+          tension: 0.3, pointRadius: 2, yAxisID: 'y2',
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: true, labels: { boxWidth: 10 } } },
+      scales: {
+        x: { grid: { color: '#1a2a4a' }, ticks: { maxTicksLimit: 15 } },
+        y:  { grid: { color: '#1a2a4a' }, position: 'left',  title: { display: true, text: 'Events' } },
+        y2: { grid: { display: false },   position: 'right', title: { display: true, text: 'Avg Mag' } },
+      }
+    }
+  });
+}
+
+// ── Map ───────────────────────────────────────────────────────────────────
+let leafletMap = null;
+let markerLayer = null;
+
+function magColor(cat) {
+  return MAG_COLORS[cat] || '#64748b';
+}
+
+async function loadMap() {
+  const pts = await fetch('/api/map').then(r => r.json());
+
+  if (!leafletMap) {
+    leafletMap = L.map('map', { preferCanvas: true }).setView([20, 0], 2);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      attribution: '© CartoDB', maxZoom: 18
+    }).addTo(leafletMap);
+  }
+  if (markerLayer) markerLayer.clearLayers();
+  markerLayer = L.layerGroup().addTo(leafletMap);
+
+  pts.forEach(p => {
+    const r = Math.max(3, Math.min(12, p.magnitude * 2));
+    const c = L.circleMarker([p.latitude, p.longitude], {
+      radius: r, color: magColor(p.mag_category),
+      fillColor: magColor(p.mag_category),
+      fillOpacity: 0.6, weight: 1,
+    });
+    c.bindPopup(`
+      <b>${p.place || 'Unknown'}</b><br>
+      Magnitude: <b>${p.magnitude}</b> (${p.mag_category})<br>
+      Depth: ${p.depth_km} km<br>
+      ${p.event_time}
+    `);
+    markerLayer.addLayer(c);
+  });
+}
+
+// ── Table ─────────────────────────────────────────────────────────────────
+async function loadTable(page=1) {
+  currentPage = page;
+  const mag   = $('filterMag').value;
+  const depth = $('filterDepth').value;
+  const url   = `/api/table?page=${page}&per_page=20&mag_category=${mag}&depth_category=${depth}`;
+  const d     = await fetch(url).then(r => r.json());
+
+  $('tableTotal').textContent = `${d.total.toLocaleString()} records`;
+  $('pageInfo').textContent   = `Page ${d.page} of ${Math.ceil(d.total/d.per_page)}`;
+  $('btnPrev').disabled       = d.page <= 1;
+  $('btnNext').disabled       = d.page >= Math.ceil(d.total/d.per_page);
+
+  $('tableBody').innerHTML = d.rows.map(r => `
+    <tr>
+      <td style="font-family:'Space Mono',monospace;font-size:.65rem;color:var(--muted)">${r.raw_id}</td>
+      <td style="font-family:'Space Mono',monospace;font-size:.7rem">${r.event_time}</td>
+      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
+          title="${r.place||''}">${r.place || '—'}</td>
+      <td style="font-weight:700;color:${magColor(r.mag_category)}">${fmt(r.magnitude,2)}</td>
+      <td><span class="badge badge-${r.mag_category}">${r.mag_category}</span></td>
+      <td>${fmt(r.depth_km,1)}</td>
+      <td><span class="badge badge-${r.depth_category}">${r.depth_category}</span></td>
+      <td style="font-family:'Space Mono',monospace;font-size:.72rem">${fmt(r.distance_from_ref_km,0)} km</td>
+      <td style="font-family:'Space Mono',monospace;font-size:.7rem">${fmt(r.magnitude_scaled,4)}</td>
+      <td>${r.is_outlier ? '<span class="outlier-flag">⚠ YES</span>' : ''}</td>
+    </tr>
+  `).join('');
+}
+
+function changePage(dir) { loadTable(currentPage + dir); }
+
+// ── Pipeline runner ───────────────────────────────────────────────────────
+async function runPipeline(mode) {
+  const log = $('runnerLog');
+  log.textContent = `// Running pipeline (${mode})...\n`;
+  try {
+    const res = await fetch('/api/run', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({mode})
+    });
+    const d = await res.json();
+    log.textContent = d.stdout || d.stderr || '// No output.';
+    log.scrollTop = log.scrollHeight;
+    if (d.status === 'ok') {
+      toast('Pipeline completed — refreshing data...');
+      setTimeout(refreshAll, 1000);
+    } else {
+      toast('Pipeline error — check log');
+    }
+  } catch(e) {
+    log.textContent = '// Request failed: ' + e.message;
+    toast('Failed to reach pipeline endpoint');
+  }
+}
+
+// ── Refresh all ───────────────────────────────────────────────────────────
+async function refreshAll() {
+  await Promise.all([loadStats(), loadCharts(), loadMap(), loadTable(1)]);
+  toast('Dashboard refreshed');
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────
+refreshAll();
+</script>
+</body>
+</html>
