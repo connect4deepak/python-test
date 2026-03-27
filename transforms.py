@@ -164,8 +164,8 @@ def select_final_columns(df: pd.DataFrame) -> pd.DataFrame:
     Keep only the columns that belong in the processed table.
     One-hot magtype_* columns are dynamically appended.
     """
-    magtype_cols = [c for c in df.columns if c.startswith("magtype_")]
-    keep = [c for c in FINAL_COLUMNS if c in df.columns] + magtype_cols
+    magtype_cols = []  # one-hot cols excluded from DB; mag_type text col is sufficient
+    keep = [c for c in FINAL_COLUMNS if c in df.columns]
     df = df[keep].copy()
 
     # Convert ordered categoricals to string for PostgreSQL compatibility

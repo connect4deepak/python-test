@@ -5,7 +5,7 @@
 DB_CONFIG = {
     "host":     "localhost",
     "port":     5432,
-    "dbname":   "earthquake",
+    "dbname":   "earthquake_db",
     "user":     "root",
     "password": "root",   # ← update this
 }
