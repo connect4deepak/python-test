@@ -278,6 +278,85 @@
     .chart-card.wide { grid-column: span 1; }
     header { flex-direction: column; gap: 14px; }
   }
+
+  /* ── Test Runner ── */
+  .test-runner-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 22px; margin-bottom: 24px;
+  }
+  .test-controls {
+    display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; align-items: center;
+  }
+  .test-summary {
+    display: flex; gap: 20px; margin-bottom: 18px; flex-wrap: wrap;
+  }
+  .test-stat {
+    font-family: 'Space Mono', monospace;
+    font-size: .72rem; padding: 6px 14px;
+    border: 1px solid var(--border);
+  }
+  .test-stat span { font-size: 1.1rem; font-weight: 700; margin-right: 6px; }
+  .stat-pass { border-color: var(--green); color: var(--green); }
+  .stat-fail { border-color: var(--accent2); color: var(--accent2); }
+  .stat-skip { border-color: var(--muted); color: var(--muted); }
+  .stat-total { border-color: var(--accent3); color: var(--accent3); }
+  .stat-time  { border-color: var(--muted); color: var(--muted); }
+
+  .test-suites { display: flex; flex-direction: column; gap: 12px; }
+  .test-suite-block { border: 1px solid var(--border); }
+  .suite-header {
+    font-family: 'Space Mono', monospace; font-size: .72rem;
+    letter-spacing: .06em; color: var(--muted); text-transform: uppercase;
+    padding: 10px 14px; background: rgba(0,0,0,.2);
+    display: flex; justify-content: space-between; align-items: center;
+    cursor: pointer; user-select: none;
+  }
+  .suite-header:hover { color: var(--text); }
+  .suite-badge {
+    font-size: .6rem; padding: 2px 8px;
+    font-family: 'Space Mono', monospace;
+  }
+  .suite-pass { background: rgba(74,222,128,.15); color: var(--green); }
+  .suite-fail { background: rgba(239,68,68,.2);   color: var(--accent2); }
+
+  .test-rows { display: none; }
+  .test-rows.open { display: block; }
+  .test-row {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 8px 14px; border-top: 1px solid rgba(26,42,74,.4);
+    font-size: .78rem;
+  }
+  .test-row:hover { background: rgba(249,115,22,.03); }
+  .test-icon { flex-shrink: 0; font-family: 'Space Mono', monospace; font-size: .7rem; width: 14px; }
+  .icon-pass  { color: var(--green); }
+  .icon-fail  { color: var(--accent2); }
+  .icon-error { color: var(--accent); }
+  .icon-skip  { color: var(--muted); }
+  .test-name  { font-family: 'Space Mono', monospace; font-size: .68rem; color: var(--text); flex: 1; }
+  .test-detail {
+    margin-top: 4px; font-family: 'Space Mono', monospace;
+    font-size: .62rem; color: var(--accent2);
+    white-space: pre-wrap; word-break: break-all;
+    background: rgba(239,68,68,.05); padding: 6px 8px;
+    border-left: 2px solid var(--accent2);
+  }
+  .test-raw-log {
+    background: var(--bg); border: 1px solid var(--border);
+    font-family: 'Space Mono', monospace; font-size: .65rem;
+    color: #475569; padding: 14px;
+    max-height: 200px; overflow-y: auto;
+    white-space: pre-wrap; word-break: break-all;
+    margin-top: 14px; display: none;
+  }
+  .test-raw-log.open { display: block; }
+  .test-running-overlay {
+    display: none; align-items: center; gap: 10px;
+    font-family: 'Space Mono', monospace; font-size: .72rem; color: var(--accent3);
+    margin-bottom: 14px;
+  }
+  .test-running-overlay.show { display: flex; }
+
 </style>
 </head>
 <body>
@@ -294,7 +373,7 @@
         </svg>
       </div>
       <div class="logo-text">
-        <h1>Data-Analysis Pipeline</h1>
+        <h1>Seismic Pipeline</h1>
         <span>USGS · Data Acquisition &amp; Preprocessing</span>
       </div>
     </div>
@@ -399,6 +478,34 @@
     </div>
     <div class="runner-log" id="runnerLog">// Pipeline output will appear here...</div>
   </div>
+
+
+  <!-- Test Runner -->
+  <div class="section-title">Test Suite</div>
+  <div class="test-runner-card">
+    <div class="test-controls">
+      <button class="btn btn-primary"  onclick="runTests('all')">▶ RUN ALL TESTS</button>
+      <button class="btn btn-ghost"    onclick="runTests('unit')">▶ UNIT ONLY</button>
+      <button class="btn btn-ghost"    onclick="runTests('integration')">▶ INTEGRATION ONLY</button>
+      <button class="btn btn-ghost"    onclick="toggleRawLog()" id="btnRawLog" style="margin-left:auto">RAW LOG</button>
+    </div>
+
+    <div class="test-running-overlay" id="testRunning">
+      <div class="spinner"></div> Running tests — this may take up to 30 seconds...
+    </div>
+
+    <div class="test-summary" id="testSummary" style="display:none">
+      <div class="test-stat stat-total"><span id="tTotal">0</span>TOTAL</div>
+      <div class="test-stat stat-pass" ><span id="tPass">0</span>PASSED</div>
+      <div class="test-stat stat-fail" ><span id="tFail">0</span>FAILED</div>
+      <div class="test-stat stat-skip" ><span id="tSkip">0</span>SKIPPED</div>
+      <div class="test-stat stat-time" ><span id="tTime">0s</span>TIME</div>
+    </div>
+
+    <div class="test-suites" id="testSuites"></div>
+    <div class="test-raw-log" id="testRawLog"></div>
+  </div>
+
 
 </div><!-- /wrapper -->
 
@@ -678,6 +785,117 @@ async function refreshAll() {
 
 // ── Init ──────────────────────────────────────────────────────────────────
 refreshAll();
+
+// ── Test Runner ───────────────────────────────────────────────────────────
+let lastTestRaw = '';
+
+async function runTests(suite) {
+  $('testRunning').classList.add('show');
+  $('testSummary').style.display = 'none';
+  $('testSuites').innerHTML = '';
+  $('testRawLog').classList.remove('open');
+
+  try {
+    const res = await fetch('/api/tests/run', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({suite})
+    });
+    const d = await res.json();
+    $('testRunning').classList.remove('show');
+
+    if (d.status === 'error' && !d.tests) {
+      $('testSuites').innerHTML =
+        `<div style="font-family:'Space Mono',monospace;font-size:.72rem;color:var(--accent2);padding:12px">${d.raw}</div>`;
+      return;
+    }
+
+    // Summary bar
+    $('testSummary').style.display = 'flex';
+    $('tTotal').textContent = d.ran;
+    $('tPass').textContent  = d.passed;
+    $('tFail').textContent  = d.failed;
+    $('tSkip').textContent  = d.skipped;
+    $('tTime').textContent  = d.elapsed.toFixed(2) + 's';
+    lastTestRaw = d.raw || '';
+
+    // Group tests by suite
+    const suites = {};
+    (d.tests || []).forEach(t => {
+      if (!suites[t.suite]) suites[t.suite] = [];
+      suites[t.suite].push(t);
+    });
+
+    const container = $('testSuites');
+    container.innerHTML = '';
+
+    if (Object.keys(suites).length === 0) {
+      container.innerHTML =
+        `<div style="font-family:'Space Mono',monospace;font-size:.72rem;color:var(--muted);padding:12px">No test results parsed — check raw log.</div>`;
+      return;
+    }
+
+    Object.entries(suites).forEach(([suiteName, tests]) => {
+      const suiteFailed = tests.some(t => t.status === 'fail' || t.status === 'error');
+      const suiteClass  = suiteFailed ? 'suite-fail' : 'suite-pass';
+      const suiteLabel  = suiteFailed ? 'FAIL' : 'PASS';
+      const passCount   = tests.filter(t => t.status === 'pass').length;
+
+      const block = document.createElement('div');
+      block.className = 'test-suite-block';
+
+      const rowsId = 'rows_' + suiteName.replace(/\W/g, '_');
+
+      block.innerHTML = `
+        <div class="suite-header" onclick="toggleSuite('${rowsId}')">
+          <span>${suiteName} <span style="color:var(--muted);font-weight:400">(${passCount}/${tests.length})</span></span>
+          <span class="suite-badge ${suiteClass}">${suiteLabel}</span>
+        </div>
+        <div class="test-rows ${suiteFailed ? 'open' : ''}" id="${rowsId}">
+          ${tests.map(t => {
+            const icons = {pass:'✓', fail:'✗', error:'!', skip:'–'};
+            const iconClass = `icon-${t.status}`;
+            return `
+              <div class="test-row">
+                <div class="test-icon ${iconClass}">${icons[t.status] || '?'}</div>
+                <div style="flex:1">
+                  <div class="test-name">${t.name}</div>
+                  ${t.detail ? `<div class="test-detail">${escHtml(t.detail)}</div>` : ''}
+                </div>
+              </div>`;
+          }).join('')}
+        </div>`;
+
+      container.appendChild(block);
+    });
+
+    toast(d.failed > 0
+      ? `Tests done — ${d.failed} failure(s)`
+      : `All ${d.passed} tests passed ✓`
+    );
+
+  } catch(e) {
+    $('testRunning').classList.remove('show');
+    $('testSuites').innerHTML =
+      `<div style="font-family:'Space Mono',monospace;font-size:.72rem;color:var(--accent2);padding:12px">Request failed: ${e.message}</div>`;
+  }
+}
+
+function toggleSuite(id) {
+  const el = $(id);
+  el.classList.toggle('open');
+}
+
+function toggleRawLog() {
+  const el = $('testRawLog');
+  el.textContent = lastTestRaw || '// No output yet — run tests first.';
+  el.classList.toggle('open');
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
 </script>
 </body>
 </html>
