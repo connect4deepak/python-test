@@ -4,3 +4,4 @@ csv_exports/
 logs/  
 pipeline.log  
 scaler.pkl
+.DS_Store
