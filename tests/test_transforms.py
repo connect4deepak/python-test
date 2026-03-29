@@ -9,7 +9,7 @@ import pickle
 import numpy as np
 import pandas as pd
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python-test'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 # Scaler is saved in CWD of the running process (python-test/ when run from there,
 # or the tests/ dir when run via run_tests.py). We patch the path to tests/

@@ -26,7 +26,7 @@ import os
 import json
 import unittest
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python-test'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 
 # ── Try to connect to the DB — skip all tests if unavailable ──────────────

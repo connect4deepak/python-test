@@ -8,7 +8,7 @@ import unittest
 import numpy as np
 import pandas as pd
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python-test'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 from cleaning import (
     normalise_schema, coerce_types, handle_nulls,
