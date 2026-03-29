@@ -1,0 +1,6 @@
+venv/
+__pycache__/ 
+csv_exports/ 
+logs/  
+pipeline.log  
+scaler.pkl
