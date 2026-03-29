@@ -21,7 +21,7 @@ import psycopg2
 import psycopg2.extras
 
 # ── Allow importing pipeline modules from parent dir ─────────────────────
-PIPELINE_DIR = os.path.join(os.path.dirname(__file__), "..")
+PIPELINE_DIR = "/home/ubuntu/python-test"
 sys.path.insert(0, PIPELINE_DIR)
 
 from config import DB_CONFIG, PROCESSED_TABLE, RAW_TABLE
@@ -64,7 +64,7 @@ def api_stats():
             ROUND(AVG(depth_km)::numeric, 2)                AS avg_depth_km,
             ROUND(MAX(depth_km)::numeric, 2)                AS max_depth_km,
             ROUND(AVG(distance_from_ref_km)::numeric, 0)    AS avg_distance_km,
-            SUM(CASE WHEN is_outlier THEN 1 ELSE 0 END)     AS outlier_count,
+            0 AS outlier_count,
             MIN(event_time)                                 AS earliest_event,
             MAX(event_time)                                 AS latest_event
         FROM {PROCESSED_TABLE};
@@ -178,7 +178,7 @@ def api_table():
         SELECT
             raw_id, magnitude, mag_category, depth_km, depth_category,
             latitude, longitude, place, event_time, status,
-            distance_from_ref_km, is_outlier, magnitude_scaled
+            distance_from_ref_km, magnitude_scaled
         FROM {PROCESSED_TABLE}
         {where}
         ORDER BY event_time DESC
@@ -232,104 +232,4 @@ def api_run():
 # ── Run ───────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=False)
-
-
-# ── Test Runner ───────────────────────────────────────────────────────────
-
-import re as _re
-
-TESTS_DIR = os.path.join(PIPELINE_DIR, "tests")
-
-
-def _parse_test_output(stdout: str, stderr: str, returncode: int) -> dict:
-    """
-    Parse unittest verbose output into structured results per test.
-    Returns a dict with summary stats and per-test list.
-    """
-    tests = []
-    # Match lines like:  test_foo (module.Class.test_foo) ... ok
-    #                    test_foo (module.Class.test_foo) ... FAIL
-    #                    test_foo (module.Class.test_foo) ... skipped 'reason'
-    pattern = _re.compile(
-        r'^(test_\S+)\s+\(([^)]+)\)\s+.*\.\.\.\s*(ok|FAIL|ERROR|skipped.*)',
-        _re.MULTILINE
-    )
-    for m in pattern.finditer(stdout):
-        name, cls, result = m.group(1), m.group(2), m.group(3).strip()
-        status = "pass" if result == "ok" else \
-                 "skip" if result.startswith("skipped") else \
-                 "fail" if result == "FAIL" else "error"
-        # Extract class name from dotted path
-        parts   = cls.split(".")
-        suite   = parts[-1] if len(parts) > 1 else cls
-        tests.append({
-            "name":   name,
-            "suite":  suite,
-            "status": status,
-            "detail": result if status not in ("pass", "skip") else "",
-        })
-
-    # Parse FAIL/ERROR detail blocks
-    fail_blocks = _re.findall(
-        r'(FAIL|ERROR): (test_\S+).*?\n-{60,}\n(.*?)\n(?=-{60,}|\Z)',
-        stdout, _re.DOTALL
-    )
-    fail_map = {name: detail.strip() for _, name, detail in fail_blocks}
-    for t in tests:
-        if t["name"] in fail_map:
-            t["detail"] = fail_map[t["name"]]
-
-    # Summary line: "Ran N test(s) in X.XXs"
-    summary_m = _re.search(r'Ran (\d+) test.*?in ([\d.]+)s', stdout)
-    ran     = int(summary_m.group(1))  if summary_m else len(tests)
-    elapsed = float(summary_m.group(2)) if summary_m else 0.0
-
-    passed  = sum(1 for t in tests if t["status"] == "pass")
-    failed  = sum(1 for t in tests if t["status"] in ("fail", "error"))
-    skipped = sum(1 for t in tests if t["status"] == "skip")
-
-    return {
-        "status":  "pass" if returncode == 0 else "fail",
-        "ran":     ran,
-        "passed":  passed,
-        "failed":  failed,
-        "skipped": skipped,
-        "elapsed": elapsed,
-        "tests":   tests,
-        "raw":     stdout[-5000:],
-    }
-
-
-@app.route("/api/tests/run", methods=["POST"])
-def api_run_tests():
-    """
-    Run the test suite and return structured JSON results.
-    Body: { "suite": "all" | "unit" | "integration" }
-    """
-    suite = request.json.get("suite", "all")
-
-    run_script = os.path.join(TESTS_DIR, "run_tests.py")
-    if not os.path.exists(run_script):
-        return jsonify({"status": "error", "raw": f"run_tests.py not found at {TESTS_DIR}"}), 404
-
-    cmd = [sys.executable, run_script]
-    if suite == "unit":
-        cmd.append("--unit")
-    elif suite == "integration":
-        cmd.append("--integration")
-
-    try:
-        result = subprocess.run(
-            cmd,
-            capture_output=True,
-            text=True,
-            timeout=180,
-            cwd=TESTS_DIR,
-        )
-        parsed = _parse_test_output(result.stdout, result.stderr, result.returncode)
-        return jsonify(parsed)
-    except subprocess.TimeoutExpired:
-        return jsonify({"status": "error", "raw": "Tests timed out after 180s"})
-    except Exception as e:
-        return jsonify({"status": "error", "raw": str(e)})
+    app.run(host="0.0.0.0", port=8080, debug=False)
