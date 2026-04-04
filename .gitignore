@@ -5,3 +5,5 @@ logs/
 pipeline.log  
 scaler.pkl
 .DS_Store
+.vscode/
+.codesight/
